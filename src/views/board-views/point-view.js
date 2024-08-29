@@ -1,6 +1,6 @@
 import { createElement } from '../../render';
 
-const createPointViewTemplate = () => {
+function createPointViewTemplate() {
   return (
     `<li class="trip-events__item">
       <div class="event">

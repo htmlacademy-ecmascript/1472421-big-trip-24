@@ -1,9 +1,7 @@
 import { createElement } from '../../render';
 
-const createEmptyListPointsViewTemplate = () => {
-  return (
-    `<p class="trip-events__msg">Click New Event to create your first point</p>`
-  );
+function createEmptyListPointsViewTemplate() {
+  return '<p class="trip-events__msg">Click New Event to create your first point</p>';
 }
 
 export default class EmptyListPointsView {

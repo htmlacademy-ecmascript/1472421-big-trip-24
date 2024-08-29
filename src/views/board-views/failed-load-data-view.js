@@ -1,9 +1,7 @@
 import { createElement } from '../../render';
 
-const createFailedLoadDataViewTemplate = () => {
-  return (
-    `<p class="trip-events__msg">Failed to load latest route information</p>`
-  );
+function createFailedLoadDataViewTemplate() {
+  return '<p class="trip-events__msg">Failed to load latest route information</p>';
 }
 
 export default class FailedLoadDataView {

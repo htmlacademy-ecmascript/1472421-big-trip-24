@@ -1,6 +1,6 @@
 import { createElement } from '../../render';
 
-const createSortViewTemplate = () => {
+function createSortViewTemplate() {
   return (
     `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
       <div class="trip-sort__item  trip-sort__item--day">

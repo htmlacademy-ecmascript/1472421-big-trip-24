@@ -1,6 +1,6 @@
 import { createElement } from '../../render';
 
-const createInfoViewTemplate = () => {
+function createInfoViewTemplate() {
   return (
     `<section class="trip-main__trip-info  trip-info">
       <div class="trip-info__main">
