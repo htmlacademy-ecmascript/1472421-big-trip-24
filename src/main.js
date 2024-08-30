@@ -1,7 +1,7 @@
 import BoardPresenter from './presenters/board-presenter.js';
-import InfoView from './views/header-views/info-view.js';
-import FilterView from './views/header-views/filter-view.js';
-import NewPointButtonView from './views/header-views/new-point-button-view.js';
+import InfoView from './views/info-view.js';
+import FilterView from './views/filter-view.js';
+import NewPointButtonView from './views/new-point-button-view.js';
 import { render } from './render';
 
 const boardContainer = document.querySelector('.trip-events');
