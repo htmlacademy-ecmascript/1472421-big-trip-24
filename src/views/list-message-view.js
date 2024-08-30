@@ -1,7 +1,8 @@
-import { createElement } from '../../render';
+import { LoadMessage } from '../const';
+import { createElement } from '../render';
 
 function createEmptyListPointsViewTemplate() {
-  return '<p class="trip-events__msg">Click New Event to create your first point</p>';
+  return `<p class="trip-events__msg">${LoadMessage.EMPTY_LIST}</p>`;
 }
 
 export default class EmptyListPointsView {

@@ -1,8 +1,9 @@
-import SortView from '../views/board-views/sort-view.js';
-import PointsListView from '../views/board-views/points-list-view.js';
-import PointView from '../views/board-views/point-view.js';
-import EditPointView from '../views/board-views/edit-point-view.js';
+import SortView from '../views/sort-view.js';
+import PointsListView from '../views/points-list-view.js';
+import PointView from '../views/point-view.js';
+import EditPointView from '../views/edit-point-view.js';
 import {render} from '../render.js';
+import { SHOW_POINT_COUNT } from '../const.js';
 
 export default class BoardPresenter {
 
@@ -17,7 +18,7 @@ export default class BoardPresenter {
     render(this.pointsListComponent, this.boardContainer);
     render(new EditPointView(), this.pointsListComponent.getElement());
 
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < SHOW_POINT_COUNT; i++) {
       render(new PointView(), this.pointsListComponent.getElement());
     }
   }
