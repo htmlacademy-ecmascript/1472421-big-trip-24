@@ -1,7 +1,7 @@
-import { CITYS } from '../const';
+import { getDestinations } from '../mocks/destination-mock';
 import { getOffersByType } from '../mocks/offers-mock';
 import { createElement } from '../render';
-import { findById } from '../utils';
+import { capitalizeFirstLetter, findById, formatPointDate, getDurationEvent } from '../utils';
 
 const getSelectedOffersTemplate = (offersId, offers) => {
 
@@ -25,7 +25,8 @@ const getSelectedOffersTemplate = (offersId, offers) => {
 
 const createPointTemplate = (pointData) => {
 
-  const {type, destination, isFavorite, offers: offersId} = pointData;
+  const {type, destination: destinationId, isFavorite, offers: offersId, dateFrom, dateTo} = pointData;
+  const destination = findById(getDestinations(), destinationId);
   const offers = getOffersByType(type);
 
   return (
@@ -35,14 +36,14 @@ const createPointTemplate = (pointData) => {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${type} ${CITYS[destination]}</h3>
+        <h3 class="event__title">${capitalizeFirstLetter(type)} ${destination.name}</h3>
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="2019-03-18T14:30">14:30</time>
+            <time class="event__start-time" datetime="2019-03-18T14:30">${formatPointDate(dateFrom)}</time>
             &mdash;
-            <time class="event__end-time" datetime="2019-03-18T16:05">16:05</time>
+            <time class="event__end-time" datetime="2019-03-18T16:05">${formatPointDate(dateTo)}</time>
           </p>
-          <p class="event__duration">01H 35M</p>
+          <p class="event__duration">${getDurationEvent(dateFrom, dateTo).hours()}H ${getDurationEvent(dateFrom, dateTo).minutes()}M</p>
         </div>
         <p class="event__price">
           &euro;&nbsp;<span class="event__price-value">160</span>

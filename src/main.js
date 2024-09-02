@@ -15,4 +15,5 @@ render(new FilterView(), headerContainer);
 render(new NewPointButtonView(), headerContainer);
 const boardPresenter = new BoardPresenter({boardContainer, pointsModel});
 
+
 boardPresenter.init();
