@@ -1,15 +1,15 @@
-import { DESTINATIONS } from '../const';
+import { CITYS } from '../const';
 import { getRandomInt } from '../utils';
 
-const destinations = {};
+const destinations = [];
 let destinationId = 0;
 
 const setDestinations = () => {
-  DESTINATIONS.forEach((destination) => {
+  CITYS.forEach((destination) => {
 
     destinationId++;
 
-    destinations[`${destination}`] = {
+    destinations.push({
       id: destinationId,
       description: `${destination}, is a beautiful city, a true asian pearl, with crowded streets.`,
       name: destination,
@@ -21,17 +21,26 @@ const setDestinations = () => {
         {
           src: `../img/photos/${getRandomInt(1,5)}.jpg`,
           destination: `${destination} parliament building`
-        }
+        },
+        {
+          src: `../img/photos/${getRandomInt(1,5)}.jpg`,
+          destination: `${destination} parliament building`
+        },
+        {
+          src: `../img/photos/${getRandomInt(1,5)}.jpg`,
+          destination: `${destination} parliament building`
+        },
+        {
+          src: `../img/photos/${getRandomInt(1,5)}.jpg`,
+          destination: `${destination} parliament building`
+        },
       ]
-    };
+    });
   });
 };
 
+setDestinations();
 
-const getDestinations = () => {
-  setDestinations();
-
-  return destinations;
-};
+const getDestinations = () => destinations;
 
 export {getDestinations};

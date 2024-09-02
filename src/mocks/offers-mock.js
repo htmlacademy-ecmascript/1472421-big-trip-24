@@ -25,11 +25,8 @@ const setOffers = () => {
   });
 };
 
+setOffers();
 
-const getOffers = () => {
-  setOffers();
+const getOffersByType = (type) => offers[type];
 
-  return offers;
-};
-
-export {getOffers};
+export {getOffersByType};

@@ -7,7 +7,8 @@ const getRandomInt = (min, max) => {
 
 const findById = (arr, id) => arr.find((element) => element.id === id);
 
-
 const getRandomArrayElement = (items) => items[Math.floor(Math.random() * items.length)];
 
-export {getRandomInt, findById, getRandomArrayElement};
+const totalOffersPrice = (offers) => offers.reduce((accumulator, currentValue) => accumulator + currentValue.price, 0);
+
+export {getRandomInt, findById, getRandomArrayElement, totalOffersPrice};

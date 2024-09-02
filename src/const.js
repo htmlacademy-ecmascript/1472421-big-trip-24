@@ -8,8 +8,8 @@ const SHOW_POINT_COUNT = 3;
 
 const EVENT_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
-const DESTINATIONS = ['Amsterdam', 'Geneva', 'Chamonix'];
+const CITYS = ['Amsterdam', 'Geneva', 'Chamonix'];
 
 const POINT_COUNT = 4;
 
-export {MessageBoard, SHOW_POINT_COUNT, EVENT_TYPES, DESTINATIONS, POINT_COUNT};
+export {MessageBoard, SHOW_POINT_COUNT, EVENT_TYPES, CITYS, POINT_COUNT};
