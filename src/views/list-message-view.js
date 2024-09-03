@@ -1,8 +1,8 @@
-import { LoadMessage } from '../const';
+import { MessageBoard } from '../const';
 import { createElement } from '../render';
 
 function createEmptyListPointsViewTemplate() {
-  return `<p class="trip-events__msg">${LoadMessage.EMPTY_LIST}</p>`;
+  return `<p class="trip-events__msg">${MessageBoard.EMPTY_LIST}</p>`;
 }
 
 export default class EmptyListPointsView {
