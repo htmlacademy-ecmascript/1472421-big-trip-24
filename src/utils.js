@@ -24,4 +24,10 @@ const getDurationEvent = (dateFrom, dateTo) => dayjs.duration(dateTo.diff(dateFr
 
 const capitalizeFirstLetter = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
-export {getRandomInt, findById, getRandomArrayElement, totalOffersPrice, formatEditPointDate, formatPointDate, getDurationEvent, capitalizeFirstLetter};
+const getOffersByType = (offers, type) => {
+  const offer = offers.filter((offerItem) => offerItem.type === type);
+
+  return offer[0].offers;
+};
+
+export {getRandomInt, findById, getRandomArrayElement, totalOffersPrice, formatEditPointDate, formatPointDate, getDurationEvent, capitalizeFirstLetter, getOffersByType};

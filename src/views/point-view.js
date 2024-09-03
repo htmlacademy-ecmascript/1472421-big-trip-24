@@ -1,7 +1,5 @@
-import { getDestinations } from '../mocks/destination-mock';
-import { getOffersByType } from '../mocks/offers-mock';
 import { createElement } from '../render';
-import { capitalizeFirstLetter, findById, formatPointDate, getDurationEvent } from '../utils';
+import { capitalizeFirstLetter, findById, formatPointDate, getDurationEvent, getOffersByType } from '../utils';
 
 const getSelectedOffersTemplate = (offersId, offers) => {
 
@@ -23,11 +21,11 @@ const getSelectedOffersTemplate = (offersId, offers) => {
   return selectedOffersTemplate;
 };
 
-const createPointTemplate = (pointData) => {
+const createPointTemplate = (point, offers, destinations) => {
 
-  const {type, destination: destinationId, isFavorite, offers: offersId, dateFrom, dateTo} = pointData;
-  const destination = findById(getDestinations(), destinationId);
-  const offers = getOffersByType(type);
+  const {type, destination: destinationId, isFavorite, offers: offersId, dateFrom, dateTo} = point;
+  const currentDestination = findById(destinations, destinationId);
+  const currentOffers = getOffersByType(offers, type);
 
   return (
     `<li class="trip-events__item">
@@ -36,7 +34,7 @@ const createPointTemplate = (pointData) => {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${capitalizeFirstLetter(type)} ${destination.name}</h3>
+        <h3 class="event__title">${capitalizeFirstLetter(type)} ${currentDestination.name}</h3>
         <div class="event__schedule">
           <p class="event__time">
             <time class="event__start-time" datetime="2019-03-18T14:30">${formatPointDate(dateFrom)}</time>
@@ -50,7 +48,7 @@ const createPointTemplate = (pointData) => {
         </p>
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
-          ${getSelectedOffersTemplate(offersId, offers)}
+          ${getSelectedOffersTemplate(offersId, currentOffers)}
         </ul>
         <button class="event__favorite-btn ${isFavorite ? 'event__favorite-btn--active' : ''} " type="button">
           <span class="visually-hidden">Add to favorite</span>
@@ -68,13 +66,15 @@ const createPointTemplate = (pointData) => {
 
 export default class PointView {
 
-  constructor({pointData}) {
-    this.pointData = pointData;
+  constructor({point, offers, destinations}) {
+    this.point = point;
+    this.offers = offers;
+    this.destinations = destinations;
   }
 
 
   getTemplate() {
-    return createPointTemplate(this.pointData);
+    return createPointTemplate(this.point, this.offers, this.destinations);
   }
 
   getElement() {

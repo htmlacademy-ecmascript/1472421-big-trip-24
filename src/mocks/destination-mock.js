@@ -1,11 +1,11 @@
-import { CITYS } from '../const';
+import { CITIES } from '../const';
 import { getRandomInt } from '../utils';
 
 const destinations = [];
 let destinationId = 0;
 
 const setDestinations = () => {
-  CITYS.forEach((destination) => {
+  CITIES.forEach((destination) => {
 
     destinationId++;
 

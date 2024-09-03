@@ -4,6 +4,11 @@ import PointView from '../views/point-view.js';
 import EditPointView from '../views/edit-point-view.js';
 import {render} from '../render.js';
 import { SHOW_POINT_COUNT } from '../const.js';
+import { getOffers } from '../mocks/offers-mock.js';
+import { getDestinations } from '../mocks/destination-mock.js';
+
+const destinations = getDestinations();
+const offers = getOffers();
 
 export default class BoardPresenter {
 
@@ -20,10 +25,10 @@ export default class BoardPresenter {
 
     render(new SortView(), this.boardContainer);
     render(this.pointsListComponent, this.boardContainer);
-    render(new EditPointView({pointData: this.pointsData[0]}), this.pointsListComponent.getElement());
+    render(new EditPointView({point: this.pointsData[0], offers, destinations}), this.pointsListComponent.getElement());
 
     for (let i = 1; i < SHOW_POINT_COUNT; i++) {
-      render(new PointView({pointData: this.pointsData[i]}), this.pointsListComponent.getElement());
+      render(new PointView({point: this.pointsData[i], offers, destinations}), this.pointsListComponent.getElement());
     }
   }
 }

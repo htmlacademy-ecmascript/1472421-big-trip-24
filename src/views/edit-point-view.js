@@ -1,8 +1,6 @@
-import { CITYS, EVENT_TYPES } from '../const';
-import { getDestinations } from '../mocks/destination-mock';
-import { getOffersByType } from '../mocks/offers-mock';
+import { CITIES, EVENT_TYPES } from '../const';
 import { createElement } from '../render';
-import { capitalizeFirstLetter, findById, formatEditPointDate } from '../utils';
+import { capitalizeFirstLetter, findById, formatEditPointDate, getOffersByType } from '../utils';
 
 const getEventTypelistTemplate = () => EVENT_TYPES.map((type) => (`
   <div class="event__type-item">
@@ -11,41 +9,26 @@ const getEventTypelistTemplate = () => EVENT_TYPES.map((type) => (`
   </div>`
 )).join('');
 
-const getDestinationListTemplate = () => CITYS.map((city) => `<option value="${city}"></option>`).join('');
+const getDestinationListTemplate = () => CITIES.map((city) => `<option value="${city}"></option>`).join('');
 
-const getOffersTemplate = (offersId, offers) => {
 
-  let offersTemplate = '';
+const getOffersTemplate = (offersId, offers) => offersId.map((offerId) => {
 
-  offersId.forEach((offerId) => {
+  const offer = findById(offers, offerId);
 
-    const offer = findById(offers, offerId);
-
-    offersTemplate += (`
-      <div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-${offer.id}" type="checkbox" name="event-offer-luggage" checked>
-        <label class="event__offer-label" for="event-offer-luggage-${offer.id}">
-          <span class="event__offer-title">${offer.title}</span>
-          &plus;&euro;&nbsp;
-          <span class="event__offer-price">${offer.price}</span>
-        </label>
-      </div>
+  return (`
+    <div class="event__offer-selector">
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-${offer.id}" type="checkbox" name="event-offer-luggage" checked>
+      <label class="event__offer-label" for="event-offer-luggage-${offer.id}">
+        <span class="event__offer-title">${offer.title}</span>
+        &plus;&euro;&nbsp;
+        <span class="event__offer-price">${offer.price}</span>
+      </label>
+    </div>
     `);
-  });
-  return offersTemplate;
-};
+}).join('');
 
-const getPhotosTemplate = (pictures) => {
-
-
-  let photosTemplate = '';
-
-  pictures.forEach((picture) => {
-    photosTemplate += `<img class="event__photo" src="${picture.src}" alt="Event photo"></img>`;
-  });
-
-  return photosTemplate;
-};
+const getPhotosTemplate = (pictures) => pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="Event photo"></img>`).join('');
 
 const getDestinationTemplate = (destination) => {
 
@@ -62,11 +45,12 @@ const getDestinationTemplate = (destination) => {
   `);
 };
 
-const createEditPointTemplate = (pointDate) => {
+const createEditPointTemplate = (point, offers, destinations) => {
 
-  const {type, destination: destinationId, dateTo, dateFrom, basePrice, offers: offersId } = pointDate;
-  const destination = findById(getDestinations(), destinationId);
-  const offers = getOffersByType(type);
+
+  const {type, destination: destinationId, dateTo, dateFrom, basePrice, offers: offersId } = point;
+  const currentDestination = findById(destinations, destinationId);
+  const currentOffers = getOffersByType(offers, type);
 
 
   return (
@@ -93,7 +77,7 @@ const createEditPointTemplate = (pointDate) => {
             <label class="event__label  event__type-output" for="event-destination-1">
               ${capitalizeFirstLetter(type)}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${currentDestination.name}" list="destination-list-1">
             <datalist id="destination-list-1">
               ${getDestinationListTemplate()}
             </datalist>
@@ -126,18 +110,18 @@ const createEditPointTemplate = (pointDate) => {
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
             <div class="event__available-offers">
-              ${getOffersTemplate(offersId, offers)}
+              ${getOffersTemplate(offersId, currentOffers)}
             </div>
           </section>
 
           <section class="event__section  event__section--destination">
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            ${getDestinationTemplate(destination)}
+            ${getDestinationTemplate(currentDestination)}
           </section>
 
           <section class="event__section  event__section--destination">
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            <p class="event__destination-description">${destination.description} </p>
+            <p class="event__destination-description">${currentDestination.description} </p>
           </section>
         </section>
       </form>
@@ -145,14 +129,17 @@ const createEditPointTemplate = (pointDate) => {
   );
 };
 
+
 export default class EditPointView {
 
-  constructor({pointData}) {
-    this.pointData = pointData;
+  constructor({point, offers, destinations}) {
+    this.point = point;
+    this.offers = offers;
+    this.destinations = destinations;
   }
 
   getTemplate() {
-    return createEditPointTemplate(this.pointData);
+    return createEditPointTemplate(this.point, this.offers, this.destinations);
   }
 
   getElement() {
