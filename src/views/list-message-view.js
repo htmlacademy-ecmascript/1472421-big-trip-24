@@ -1,24 +1,12 @@
 import { MessageBoard } from '../const';
-import { createElement } from '../render';
+import AbstractView from '../framework/view/abstract-view';
 
-function createEmptyListPointsViewTemplate() {
+function createEmptyListPointsTemplate() {
   return `<p class="trip-events__msg">${MessageBoard.EMPTY_LIST}</p>`;
 }
 
-export default class EmptyListPointsView {
-  getTemplate() {
-    return createEmptyListPointsViewTemplate();
-  }
-
-  getElement() {
-    if(!this.element){
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+export default class EmptyListPointsView extends AbstractView{
+  get template() {
+    return createEmptyListPointsTemplate();
   }
 }

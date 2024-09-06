@@ -1,5 +1,5 @@
-import { CITIES, EVENT_TYPES } from '../const';
-import { createElement } from '../render';
+import { EVENT_TYPES } from '../const';
+import AbstractView from '../framework/view/abstract-view';
 import { capitalizeFirstLetter, findById, formatEditPointDate, getOffersByType } from '../utils';
 
 const getEventTypelistTemplate = () => EVENT_TYPES.map((type) => (`
@@ -9,7 +9,7 @@ const getEventTypelistTemplate = () => EVENT_TYPES.map((type) => (`
   </div>`
 )).join('');
 
-const getDestinationListTemplate = () => CITIES.map((city) => `<option value="${city}"></option>`).join('');
+const getDestinationListTemplate = (destinations) => destinations.map((destination) => `<option value="${destination.name}"></option>`).join('');
 
 
 const getOffersTemplate = (offersId, offers) => offersId.map((offerId) => {
@@ -79,7 +79,7 @@ const createEditPointTemplate = (point, offers, destinations) => {
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${currentDestination.name}" list="destination-list-1">
             <datalist id="destination-list-1">
-              ${getDestinationListTemplate()}
+              ${getDestinationListTemplate(destinations)}
             </datalist>
           </div>
 
@@ -130,27 +130,16 @@ const createEditPointTemplate = (point, offers, destinations) => {
 };
 
 
-export default class EditPointView {
+export default class EditPointView extends AbstractView {
 
   constructor({point, offers, destinations}) {
+    super();
     this.point = point;
     this.offers = offers;
     this.destinations = destinations;
   }
 
-  getTemplate() {
+  get template() {
     return createEditPointTemplate(this.point, this.offers, this.destinations);
-  }
-
-  getElement() {
-    if(!this.element){
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }
