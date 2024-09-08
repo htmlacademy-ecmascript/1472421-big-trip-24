@@ -1,12 +1,19 @@
-import { MessageBoard } from '../const';
 import AbstractView from '../framework/view/abstract-view';
 
-function createEmptyListPointsTemplate() {
-  return `<p class="trip-events__msg">${MessageBoard.EMPTY_LIST}</p>`;
+function createEmptyListPointsTemplate(message) {
+  return `<p class="trip-events__msg">${message}</p>`;
 }
 
-export default class EmptyListPointsView extends AbstractView{
+export default class ListMessageView extends AbstractView{
+
+  #message = null;
+
+  constructor({message}){
+    super();
+    this.#message = message;
+  }
+
   get template() {
-    return createEmptyListPointsTemplate();
+    return createEmptyListPointsTemplate(this.#message);
   }
 }
