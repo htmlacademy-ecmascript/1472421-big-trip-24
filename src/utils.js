@@ -30,4 +30,37 @@ const getOffersByType = (offers, type) => {
   return offer[0].offers;
 };
 
-export {getRandomInt, findById, getRandomArrayElement, totalOffersPrice, formatEditPointDate, formatPointDate, getDurationEvent, capitalizeFirstLetter, getOffersByType};
+const getRandomDate = () => {
+  const switcher = getRandomInt(1,2);
+  const dateNow = dayjs(new Date());
+
+  switch (switcher){
+    case 1:
+      return dateNow.add(getRandomInt(1,4), 'hour');
+    case 2:
+      return dateNow.subtract(getRandomInt(1,4), 'hour');
+  }
+};
+
+const isFuturePoint = (point) => dayjs().isBefore(point.dateFrom, 'minute');
+
+const isExpiredPoint = (point) => dayjs(point.dateTo) && dayjs().isAfter(dayjs(point.dateTo), 'milliseconds');
+
+const isActualPoint = (point) => point.dateTo && (dayjs().isSame(dayjs(point.dateFrom), 'minute') || dayjs().isAfter(dayjs(point.dateFrom), 'minute')) && (dayjs().isSame(dayjs(point.dateTo), 'minute') || dayjs().isBefore(dayjs(point.dateTo), 'minute'));
+
+
+export {
+  getRandomInt,
+  findById,
+  getRandomArrayElement,
+  totalOffersPrice,
+  formatEditPointDate,
+  formatPointDate,
+  getDurationEvent,
+  capitalizeFirstLetter,
+  getOffersByType,
+  getRandomDate,
+  isFuturePoint,
+  isActualPoint,
+  isExpiredPoint
+};
