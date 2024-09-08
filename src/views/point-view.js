@@ -1,25 +1,19 @@
-import { createElement } from '../render';
+import AbstractView from '../framework/view/abstract-view';
 import { capitalizeFirstLetter, findById, formatPointDate, getDurationEvent, getOffersByType } from '../utils';
 
-const getSelectedOffersTemplate = (offersId, offers) => {
 
+const getSelectedOffersTemplate = (offersId, offers) => offersId.map((offerId) => {
+  const offer = findById(offers, offerId);
 
-  let selectedOffersTemplate = '';
+  return (`
+    <li class="event__offer">
+      <span class="event__offer-title">${offer.title}</span>
+      &plus;&euro;&nbsp;
+      <span class="event__offer-price">${offer.price}</span>
+    </li>
+  `);
+}).join('');
 
-  offersId.forEach((offerId) => {
-
-    const offer = findById(offers, offerId);
-
-    selectedOffersTemplate += (`
-      <li class="event__offer">
-        <span class="event__offer-title">${offer.title}</span>
-        &plus;&euro;&nbsp;
-        <span class="event__offer-price">${offer.price}</span>
-      </li>
-    `);
-  });
-  return selectedOffersTemplate;
-};
 
 const createPointTemplate = (point, offers, destinations) => {
 
@@ -64,28 +58,36 @@ const createPointTemplate = (point, offers, destinations) => {
   );
 };
 
-export default class PointView {
+export default class PointView extends AbstractView{
 
-  constructor({point, offers, destinations}) {
-    this.point = point;
-    this.offers = offers;
-    this.destinations = destinations;
+  #point = null;
+  #offers = null;
+  #destinations = null;
+  #onOpenEditButtonClick = null;
+
+
+  constructor({point, offers, destinations, onOpenEditButtonClick}) {
+    super();
+    this.#point = point;
+    this.#offers = offers;
+    this.#destinations = destinations;
+    this.#onOpenEditButtonClick = onOpenEditButtonClick;
+    this.#setEventListeners();
   }
 
 
-  getTemplate() {
-    return createPointTemplate(this.point, this.offers, this.destinations);
+  get template() {
+    return createPointTemplate(this.#point, this.#offers, this.#destinations);
   }
 
-  getElement() {
-    if(!this.element){
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
+  #setEventListeners() {
+    this.element
+      .querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#openEditButtonClickHandler);
   }
 
-  removeElement() {
-    this.element = null;
-  }
+  #openEditButtonClickHandler = (evt) => {
+    evt.preventDefault(evt);
+    this.#onOpenEditButtonClick();
+  };
 }

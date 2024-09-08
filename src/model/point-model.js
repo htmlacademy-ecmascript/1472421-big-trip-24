@@ -3,10 +3,10 @@ import { generationPoints } from '../mocks/point-mock';
 
 export default class PointsModel {
 
-  points = generationPoints();
+  #points = generationPoints();
 
-  getPoints() {
-    return this.points;
+  get points() {
+    return this.#points;
   }
 
 }
