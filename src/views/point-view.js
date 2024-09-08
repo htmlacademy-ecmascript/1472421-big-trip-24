@@ -60,15 +60,34 @@ const createPointTemplate = (point, offers, destinations) => {
 
 export default class PointView extends AbstractView{
 
-  constructor({point, offers, destinations}) {
+  #point = null;
+  #offers = null;
+  #destinations = null;
+  #onOpenEditButtonClick = null;
+
+
+  constructor({point, offers, destinations, onOpenEditButtonClick}) {
     super();
-    this.point = point;
-    this.offers = offers;
-    this.destinations = destinations;
+    this.#point = point;
+    this.#offers = offers;
+    this.#destinations = destinations;
+    this.#onOpenEditButtonClick = onOpenEditButtonClick;
+    this.#setEventListeners();
   }
 
 
   get template() {
-    return createPointTemplate(this.point, this.offers, this.destinations);
+    return createPointTemplate(this.#point, this.#offers, this.#destinations);
   }
+
+  #setEventListeners() {
+    this.element
+      .querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#openEditButtonClickHandler);
+  }
+
+  #openEditButtonClickHandler = (evt) => {
+    evt.preventDefault(evt);
+    this.#onOpenEditButtonClick();
+  };
 }
