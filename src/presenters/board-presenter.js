@@ -38,7 +38,7 @@ export default class BoardPresenter {
   #renderPoint(point, offers, destinations){
 
     const pointPresenter = new PointPresenter({
-      pointsListComponent: this.#pointsListComponent
+      pointsListComponent: this.#pointsListComponent.element
     });
 
     pointPresenter.init(point, offers, destinations);
