@@ -1,5 +1,6 @@
-import { EVENT_TYPES, POINT_COUNT, CITIES } from '../const.js';
-import { getRandomArrayElement, getRandomDate, getRandomInt } from '../utils.js';
+import { EVENT_TYPES, POINT_COUNT, CITIES } from '../const/points-const.js';
+import { getRandomDate } from '../utils/points-utils.js';
+import { getRandomArrayElement, getRandomInt} from '../utils/utils.js';
 
 const randomType = () => getRandomArrayElement(EVENT_TYPES);
 

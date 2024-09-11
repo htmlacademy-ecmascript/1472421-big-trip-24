@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view';
-import { capitalizeFirstLetter, findById, formatPointDate, getDurationEvent, getOffersByType } from '../utils';
-
+import { formatPointDate, getDurationEvent, getOffersByType } from '../utils/points-utils';
+import { capitalizeFirstLetter, findById } from '../utils/utils';
 
 const getSelectedOffersTemplate = (offersId, offers) => offersId.map((offerId) => {
   const offer = findById(offers, offerId);
@@ -61,8 +61,8 @@ const createPointTemplate = (point, offers, destinations) => {
 export default class PointView extends AbstractView{
 
   #point = null;
-  #offers = null;
-  #destinations = null;
+  #offers = [];
+  #destinations = [];
   #onOpenEditButtonClick = null;
 
 

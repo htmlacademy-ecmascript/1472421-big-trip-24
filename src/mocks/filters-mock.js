@@ -1,8 +1,8 @@
-import { filter } from '../const';
+import { filter } from '../const/filter-const';
 
-const generationFilters = (points) => Object.entries(filter).map(([filterType, filterPatternByType]) => ({
+const generateFilters = (points) => Object.entries(filter).map(([filterType, filterPatternByType]) => ({
   type: filterType,
   count: filterPatternByType(points).length
 }));
 
-export { generationFilters};
+export { generateFilters};

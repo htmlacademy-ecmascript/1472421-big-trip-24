@@ -1,5 +1,5 @@
-import { EVENT_TYPES } from '../const';
-import { getRandomInt } from '../utils';
+import { EVENT_TYPES } from '../const/points-const';
+import { getRandomInt } from '../utils/utils';
 
 let offers = [];
 

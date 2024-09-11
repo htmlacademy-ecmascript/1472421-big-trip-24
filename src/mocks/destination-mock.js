@@ -1,5 +1,5 @@
-import { CITIES } from '../const';
-import { getRandomInt } from '../utils';
+import { CITIES } from '../const/points-const';
+import { getRandomInt } from '../utils/utils';
 
 const destinations = [];
 let destinationId = 0;

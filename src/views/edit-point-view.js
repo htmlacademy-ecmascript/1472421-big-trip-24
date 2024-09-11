@@ -1,6 +1,7 @@
-import { EVENT_TYPES } from '../const';
+import { EVENT_TYPES } from '../const/points-const';
 import AbstractView from '../framework/view/abstract-view';
-import { capitalizeFirstLetter, findById, formatEditPointDate, getOffersByType } from '../utils';
+import { formatEditPointDate, getOffersByType } from '../utils/points-utils';
+import { capitalizeFirstLetter, findById } from '../utils/utils';
 
 const getEventTypelistTemplate = () => EVENT_TYPES.map((type) => (`
   <div class="event__type-item">
@@ -133,8 +134,8 @@ const createEditPointTemplate = (point, offers, destinations) => {
 export default class EditPointView extends AbstractView {
 
   #point = null;
-  #offers = null;
-  #destinations = null;
+  #offers = [];
+  #destinations = [];
   #onCloseEditButtonClick = null;
   #onSubmitButtonClick = null;
 
