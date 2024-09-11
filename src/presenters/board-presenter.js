@@ -3,7 +3,7 @@ import PointsListView from '../views/points-list-view.js';
 import PointView from '../views/point-view.js';
 import EditPointView from '../views/edit-point-view.js';
 import { render, replace } from '../framework/render.js';
-import { SHOW_POINT_COUNT, MessageBoard } from '../const.js';
+import { MessageBoard } from '../const/points-const.js';
 import ListMessageView from '../views/list-message-view.js';
 
 
@@ -14,9 +14,9 @@ export default class BoardPresenter {
   #offersModel = null;
   #destinationsModel = null;
   #pointsListComponent = new PointsListView();
-  #pointsData = [];
-  #offersData = [];
-  #destinationsData = [];
+  #points = [];
+  #offers = [];
+  #destinations = [];
 
 
   constructor({boardContainer, pointsModel, offersModel, destinationsModel}) {
@@ -28,9 +28,9 @@ export default class BoardPresenter {
 
 
   init() {
-    this.#pointsData = [...this.#pointsModel.points];
-    this.#offersData = [...this.#offersModel.offers];
-    this.#destinationsData = [...this.#destinationsModel.destinations];
+    this.#points = [...this.#pointsModel.points];
+    this.#offers = [...this.#offersModel.offers];
+    this.#destinations = [...this.#destinationsModel.destinations];
 
     this.#renderBoard();
   }
@@ -97,13 +97,12 @@ export default class BoardPresenter {
     render(new SortView(), this.#boardContainer);
     render(this.#pointsListComponent, this.#boardContainer);
 
-    if(this.#pointsData.length !== 0){
-      for (let i = 0; i < SHOW_POINT_COUNT; i++) {
-        this.#renderPoint(this.#pointsData[i], this.#offersData, this.#destinationsData);
-      }
-    }else{
+    if(this.#points.length === 0){
       render(new ListMessageView({message: MessageBoard.EMPTY_LIST}), this.#pointsListComponent.element);
+      return;
     }
+
+    this.#points.forEach((point) => this.#renderPoint(point, this.#offers, this.#destinations));
   }
 
 }

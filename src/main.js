@@ -6,16 +6,19 @@ import { render } from './framework/render.js';
 import PointsModel from './model/point-model.js';
 import OffersModel from './model/offers-model.js';
 import DestinationsModel from './model/destinations-model.js';
+import { generateFilters } from './mocks/filters-mock.js';
 
 const pointsModel = new PointsModel();
 const offersModel = new OffersModel();
 const destinationsModel = new DestinationsModel();
 
+const filters = generateFilters(pointsModel.points);
+
 const boardContainer = document.querySelector('.trip-events');
 const headerContainer = document.querySelector('.trip-main');
 
 render(new InfoView(), headerContainer);
-render(new FilterView(), headerContainer);
+render(new FilterView({filters}), headerContainer);
 render(new NewPointButtonView(), headerContainer);
 
 const boardPresenter = new BoardPresenter({

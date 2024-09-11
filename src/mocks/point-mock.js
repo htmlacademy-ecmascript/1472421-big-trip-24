@@ -1,12 +1,12 @@
-import dayjs from 'dayjs';
-import { EVENT_TYPES, POINT_COUNT, CITIES } from '../const.js';
-import { getRandomArrayElement, getRandomInt } from '../utils.js';
+import { EVENT_TYPES, POINT_COUNT, CITIES } from '../const/points-const.js';
+import { getRandomDate } from '../utils/points-utils.js';
+import { getRandomArrayElement, getRandomInt} from '../utils/utils.js';
 
 const randomType = () => getRandomArrayElement(EVENT_TYPES);
 
 const generatePoint = () => {
 
-  const dateNow = dayjs(new Date());
+  const dateNow = getRandomDate();
 
   return ({
     id: getRandomInt(0, 100),
