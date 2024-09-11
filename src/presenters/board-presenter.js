@@ -1,10 +1,9 @@
 import SortView from '../views/sort-view.js';
 import PointsListView from '../views/points-list-view.js';
-import PointView from '../views/point-view.js';
-import EditPointView from '../views/edit-point-view.js';
-import { render, replace } from '../framework/render.js';
+import { render } from '../framework/render.js';
 import { MessageBoard } from '../const/points-const.js';
 import ListMessageView from '../views/list-message-view.js';
+import PointPresenter from './point-presenter.js';
 
 
 export default class BoardPresenter {
@@ -36,61 +35,13 @@ export default class BoardPresenter {
   }
 
 
-  /**
-   *
-   * @param {Object} point
-   */
   #renderPoint(point, offers, destinations){
-    /* В данных функциях описывается логика, выполняющаяся
-    при кликах(стрелка или save). На данном этапе описана реализация
-    замены точки на форму редактирования точки и наоборот.
-    Поведение описывается тут, а не во view потому, что именно тут создаются
-    компоненты, которые заменяют друг друга.
-    Поэтому логика поведения передается через конструктор
-    в компонент(view) */
-    const escKeyDownHandler = (evt) => {
-      if(evt.key === 'Escape'){
-        evt.preventDefault();
-        replaceEditPointToPoint();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }
-    };
-    const onOpenEditButtonClick = () => {
-      replacePointToEditPoint();
-      document.addEventListener('keydown', escKeyDownHandler);
-    };
-    const onCloseEditButtonClick = () => {
-      replaceEditPointToPoint();
-      document.removeEventListener('keydown', escKeyDownHandler);
-    };
-    const onSubmitButtonClick = () => {
-      replaceEditPointToPoint();
-      document.removeEventListener('keydown', escKeyDownHandler);
-    };
 
-    const pointComponent = new PointView({
-      point,
-      offers,
-      destinations,
-      onOpenEditButtonClick
+    const pointPresenter = new PointPresenter({
+      pointsListComponent: this.#pointsListComponent
     });
 
-    const editPointComponent = new EditPointView({
-      point,
-      offers,
-      destinations,
-      onCloseEditButtonClick,
-      onSubmitButtonClick
-    });
-
-    function replacePointToEditPoint() {
-      replace(editPointComponent, pointComponent);
-    }
-    function replaceEditPointToPoint() {
-      replace(pointComponent, editPointComponent);
-    }
-
-    render(pointComponent, this.#pointsListComponent.element);
+    pointPresenter.init(point, offers, destinations);
   }
 
   #renderBoard() {
