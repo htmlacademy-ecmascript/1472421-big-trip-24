@@ -1,6 +1,7 @@
 import PointView from '../views/point-view.js';
 import EditPointView from '../views/edit-point-view.js';
 import { remove, render,replace } from '../framework/render';
+import { PointMode } from '../const/points-const.js';
 
 export default class PointPresenter {
   #point = null;
@@ -11,8 +12,15 @@ export default class PointPresenter {
   #editPointComponent = null;
   #pointsListComponent = null;
 
-  constructor({pointsListComponent}){
+  #pointChangeHandler = null;
+  #modeChangeHandler = null;
+
+  #mode = PointMode.DEFAULT;
+
+  constructor({pointsListComponent, onPointChange, onModeChange}){
     this.#pointsListComponent = pointsListComponent;
+    this.#pointChangeHandler = onPointChange;
+    this.#modeChangeHandler = onModeChange;
   }
 
   init(point, offers, destinations){
@@ -39,7 +47,8 @@ export default class PointPresenter {
       point: this.#point,
       offers: this.#offers,
       destinations: this.#destinations,
-      onOpenEditButtonClick: this.#onOpenEditButtonClick
+      onOpenEditButtonClick: this.#onOpenEditButtonClick,
+      onFavoriteClick: this.#onFavoriteClick
     });
 
     this.#editPointComponent = new EditPointView({
@@ -55,10 +64,10 @@ export default class PointPresenter {
       return;
     }
 
-    if(this.#pointsListComponent.contains(preventPointComponent)){
+    if(this.#mode === PointMode.DEFAULT){
       replace(this.#pointComponent, preventPointComponent);
     }
-    if(this.#pointsListComponent.contains(prevEditPointComponent)){
+    if(this.#mode === PointMode.EDITING){
       replace(this.#editPointComponent, prevEditPointComponent);
     }
 
@@ -67,9 +76,14 @@ export default class PointPresenter {
 
   }
 
+  resetView() {
+    if(this.#mode !== PointMode.DEFAULT){
+      this.#replaceEditPointToPoint();
+    }
+  }
+
   #onOpenEditButtonClick = () => {
     this.#replacePointToEditPoint();
-
   };
 
   #onCloseEditButtonClick = () => this.#replaceEditPointToPoint();
@@ -83,14 +97,21 @@ export default class PointPresenter {
     }
   };
 
+  #onFavoriteClick = () => {
+    this.#pointChangeHandler({...this.#point, isFavorite: !this.#point.isFavorite});
+  };
+
   #replacePointToEditPoint = () => {
     replace(this.#editPointComponent, this.#pointComponent);
     document.addEventListener('keydown', this.#escKeyDownHandler);
+    this.#modeChangeHandler();
+    this.#mode = PointMode.EDITING;
   };
 
   #replaceEditPointToPoint = () => {
     replace(this.#pointComponent, this.#editPointComponent);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
+    this.#mode = PointMode.DEFAULT;
   };
 
   destroy() {

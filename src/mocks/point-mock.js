@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid';
 import { EVENT_TYPES, POINT_COUNT, CITIES } from '../const/points-const.js';
 import { getRandomDate } from '../utils/points-utils.js';
 import { getRandomArrayElement, getRandomInt} from '../utils/utils.js';
@@ -9,7 +10,7 @@ const generatePoint = () => {
   const dateNow = getRandomDate();
 
   return ({
-    id: getRandomInt(0, 100),
+    id: nanoid(),
     basePrice: getRandomInt(0, 100),
     dateFrom: dateNow,
     dateTo: dateNow.add(getRandomInt(1,4), 'hour'),
