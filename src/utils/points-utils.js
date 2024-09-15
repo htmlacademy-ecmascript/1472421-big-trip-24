@@ -38,6 +38,7 @@ const isExpiredPoint = (point) => dayjs(point.dateTo) && dayjs().isAfter(dayjs(p
 
 const isActualPoint = (point) => point.dateTo && (dayjs().isSame(dayjs(point.dateFrom), 'minute') || dayjs().isAfter(dayjs(point.dateFrom), 'minute')) && (dayjs().isSame(dayjs(point.dateTo), 'minute') || dayjs().isBefore(dayjs(point.dateTo), 'minute'));
 
+const updatePointData = (points, updatePoint) => points.map((point) => point.id === updatePoint.id ? updatePoint : point);
 
 export {
   totalOffersPrice,
@@ -48,5 +49,6 @@ export {
   getRandomDate,
   isFuturePoint,
   isActualPoint,
-  isExpiredPoint
+  isExpiredPoint,
+  updatePointData
 };

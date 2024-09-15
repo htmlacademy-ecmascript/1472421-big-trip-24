@@ -63,15 +63,18 @@ export default class PointView extends AbstractView{
   #point = null;
   #offers = [];
   #destinations = [];
+
   #onOpenEditButtonClick = null;
+  #onFavoriteClick = null;
 
 
-  constructor({point, offers, destinations, onOpenEditButtonClick}) {
+  constructor({point, offers, destinations, onOpenEditButtonClick, onFavoriteClick}) {
     super();
     this.#point = point;
     this.#offers = offers;
     this.#destinations = destinations;
     this.#onOpenEditButtonClick = onOpenEditButtonClick;
+    this.#onFavoriteClick = onFavoriteClick;
     this.#setEventListeners();
   }
 
@@ -84,10 +87,18 @@ export default class PointView extends AbstractView{
     this.element
       .querySelector('.event__rollup-btn')
       .addEventListener('click', this.#openEditButtonClickHandler);
+    this.element
+      .querySelector('.event__favorite-btn')
+      .addEventListener('click', this.#favoriteClickHandler);
   }
 
   #openEditButtonClickHandler = (evt) => {
     evt.preventDefault(evt);
     this.#onOpenEditButtonClick();
+  };
+
+  #favoriteClickHandler = (evt) => {
+    evt.preventDefault(evt);
+    this.#onFavoriteClick();
   };
 }

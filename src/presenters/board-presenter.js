@@ -1,10 +1,10 @@
 import SortView from '../views/sort-view.js';
 import PointsListView from '../views/points-list-view.js';
-import PointView from '../views/point-view.js';
-import EditPointView from '../views/edit-point-view.js';
-import { render, replace } from '../framework/render.js';
+import { render } from '../framework/render.js';
 import { MessageBoard } from '../const/points-const.js';
 import ListMessageView from '../views/list-message-view.js';
+import PointPresenter from './point-presenter.js';
+import { updatePointData } from '../utils/points-utils.js';
 
 
 export default class BoardPresenter {
@@ -13,10 +13,14 @@ export default class BoardPresenter {
   #pointsModel = null;
   #offersModel = null;
   #destinationsModel = null;
+
   #pointsListComponent = new PointsListView();
+
   #points = [];
   #offers = [];
   #destinations = [];
+
+  #pointPresenters = new Map();
 
 
   constructor({boardContainer, pointsModel, offersModel, destinationsModel}) {
@@ -36,61 +40,16 @@ export default class BoardPresenter {
   }
 
 
-  /**
-   *
-   * @param {Object} point
-   */
   #renderPoint(point, offers, destinations){
-    /* В данных функциях описывается логика, выполняющаяся
-    при кликах(стрелка или save). На данном этапе описана реализация
-    замены точки на форму редактирования точки и наоборот.
-    Поведение описывается тут, а не во view потому, что именно тут создаются
-    компоненты, которые заменяют друг друга.
-    Поэтому логика поведения передается через конструктор
-    в компонент(view) */
-    const escKeyDownHandler = (evt) => {
-      if(evt.key === 'Escape'){
-        evt.preventDefault();
-        replaceEditPointToPoint();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }
-    };
-    const onOpenEditButtonClick = () => {
-      replacePointToEditPoint();
-      document.addEventListener('keydown', escKeyDownHandler);
-    };
-    const onCloseEditButtonClick = () => {
-      replaceEditPointToPoint();
-      document.removeEventListener('keydown', escKeyDownHandler);
-    };
-    const onSubmitButtonClick = () => {
-      replaceEditPointToPoint();
-      document.removeEventListener('keydown', escKeyDownHandler);
-    };
 
-    const pointComponent = new PointView({
-      point,
-      offers,
-      destinations,
-      onOpenEditButtonClick
+    const pointPresenter = new PointPresenter({
+      pointsListComponent: this.#pointsListComponent.element,
+      onPointChange: this.#pointChangeHandler,
+      onModeChange: this.#modeChangeHandler
     });
 
-    const editPointComponent = new EditPointView({
-      point,
-      offers,
-      destinations,
-      onCloseEditButtonClick,
-      onSubmitButtonClick
-    });
-
-    function replacePointToEditPoint() {
-      replace(editPointComponent, pointComponent);
-    }
-    function replaceEditPointToPoint() {
-      replace(pointComponent, editPointComponent);
-    }
-
-    render(pointComponent, this.#pointsListComponent.element);
+    pointPresenter.init(point, offers, destinations);
+    this.#pointPresenters.set(point.id, pointPresenter);
   }
 
   #renderBoard() {
@@ -105,4 +64,30 @@ export default class BoardPresenter {
     this.#points.forEach((point) => this.#renderPoint(point, this.#offers, this.#destinations));
   }
 
+  /* Метод описывается стрелочной функцией, для того, что бы при вызове
+  в экземплярах других классов, знал о существовании всех
+  презентеров точек. (такая информация хранится в свойстве
+  презентера маршрута.
+  Далее метод передается в каждый создаваемый презентер, что
+  бы в нем,метод вызывался при изменении каких-либо данных точки
+  маршрута при взаимодействии пользователся с view и изменения
+  внесенные пользователем попали в презентер и у презентера нужной точки
+  был вновь вызван метод init() с обновленными данными,
+  который в свою очередь прокинет обновленные данные во view и перерерисует
+  view*/
+  #pointChangeHandler = (updatePoint) => {
+    this.#points = updatePointData(this.#points, updatePoint);
+    this.#pointPresenters.get(updatePoint.id).init(updatePoint, this.#offers, this.#destinations);
+  };
+
+  #modeChangeHandler = () => {
+    this.#pointPresenters.forEach((presenter) => presenter.resetView());
+  };
+
 }
+
+/* Сделать
+  - изменение типа маршрута,
+  - сохранение данных по нажатию на Submit
+
+*/

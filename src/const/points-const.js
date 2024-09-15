@@ -15,6 +15,11 @@ const CITIES = ['Amsterdam', 'Geneva', 'Chamonix'];
 
 const POINT_COUNT = 10;
 
+const PointMode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING'
+};
+
 
 export {
   MessageBoard,
@@ -23,4 +28,5 @@ export {
   POINT_COUNT,
   EDIT_POINT_DATE_FORMAT,
   POINT_DATE_FORMAT,
+  PointMode
 };
