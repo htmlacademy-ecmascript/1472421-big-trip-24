@@ -17,7 +17,7 @@ const getSelectedOffersTemplate = (offersId, offers) => offersId.map((offerId) =
 
 const createPointTemplate = (point, offers, destinations) => {
 
-  const {type, destination: destinationId, isFavorite, offers: offersId, dateFrom, dateTo} = point;
+  const {type, destination: destinationId, isFavorite, offers: offersId, dateFrom, dateTo, basePrice} = point;
   const currentDestination = findById(destinations, destinationId);
   const currentOffers = getOffersByType(offers, type);
 
@@ -38,7 +38,7 @@ const createPointTemplate = (point, offers, destinations) => {
           <p class="event__duration">${getDurationEvent(dateFrom, dateTo).hours()}H ${getDurationEvent(dateFrom, dateTo).minutes()}M</p>
         </div>
         <p class="event__price">
-          &euro;&nbsp;<span class="event__price-value">160</span>
+          &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
         </p>
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">

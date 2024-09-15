@@ -1,10 +1,10 @@
 import SortView from '../views/sort-view.js';
 import PointsListView from '../views/points-list-view.js';
 import { render } from '../framework/render.js';
-import { MessageBoard } from '../const/points-const.js';
+import { MessageBoard, SortType } from '../const/points-const.js';
 import ListMessageView from '../views/list-message-view.js';
 import PointPresenter from './point-presenter.js';
-import { updatePointData } from '../utils/points-utils.js';
+import { sortByPrice, sortByTime, updatePointData } from '../utils/points-utils.js';
 
 
 export default class BoardPresenter {
@@ -15,10 +15,13 @@ export default class BoardPresenter {
   #destinationsModel = null;
 
   #pointsListComponent = new PointsListView();
+  #sortComponent = null;
 
   #points = [];
+  #sourcedPoints = [];
   #offers = [];
   #destinations = [];
+  #currentSortType = SortType.DAY;
 
   #pointPresenters = new Map();
 
@@ -33,6 +36,7 @@ export default class BoardPresenter {
 
   init() {
     this.#points = [...this.#pointsModel.points];
+    this.#sourcedPoints = [...this.#pointsModel.points];
     this.#offers = [...this.#offersModel.offers];
     this.#destinations = [...this.#destinationsModel.destinations];
 
@@ -52,8 +56,8 @@ export default class BoardPresenter {
     this.#pointPresenters.set(point.id, pointPresenter);
   }
 
-  #renderBoard() {
-    render(new SortView(), this.#boardContainer);
+
+  #renderPointsList = () => {
     render(this.#pointsListComponent, this.#boardContainer);
 
     if(this.#points.length === 0){
@@ -62,6 +66,16 @@ export default class BoardPresenter {
     }
 
     this.#points.forEach((point) => this.#renderPoint(point, this.#offers, this.#destinations));
+  };
+
+  #renderSort() {
+    this.#sortComponent = new SortView({onSortButtonClick: this.#onSortButtonClick});
+    render(this.#sortComponent, this.#boardContainer);
+  }
+
+  #renderBoard() {
+    this.#renderSort();
+    this.#renderPointsList();
   }
 
   /* Метод описывается стрелочной функцией, для того, что бы при вызове
@@ -77,6 +91,7 @@ export default class BoardPresenter {
   view*/
   #pointChangeHandler = (updatePoint) => {
     this.#points = updatePointData(this.#points, updatePoint);
+    this.#sourcedPoints = updatePointData(this.#points, updatePoint);
     this.#pointPresenters.get(updatePoint.id).init(updatePoint, this.#offers, this.#destinations);
   };
 
@@ -84,10 +99,41 @@ export default class BoardPresenter {
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
   };
 
+  #onSortButtonClick = (sortType) => {
+    if(this.#currentSortType === sortType){
+      return;
+    }
+
+    this.#sortPoint(sortType);
+    this.#clearPointslist();
+    this.#renderPointsList();
+  };
+
+  #clearPointslist = () => {
+    this.#pointPresenters.forEach((point) => point.destroy());
+    this.#pointPresenters.clear();
+  };
+
+  #sortPoint = (sortType) => {
+    switch(sortType) {
+      case SortType.DAY:
+        this.#points = [...this.#sourcedPoints];
+        break;
+      case SortType.PRICE:
+        this.#points.sort(sortByPrice);
+        break;
+      case SortType.TIME:
+        this.#points.sort(sortByTime);
+        break;
+    }
+
+
+    this.#currentSortType = sortType;
+  };
+
 }
 
 /* Сделать
   - изменение типа маршрута,
   - сохранение данных по нажатию на Submit
-
 */
