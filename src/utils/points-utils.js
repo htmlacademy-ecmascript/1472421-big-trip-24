@@ -74,7 +74,7 @@ const togleOffers = (offers, offerId) => {
 
   return offers.filter((offersItem) => offersItem !== +offerId);
 
-}
+};
 
 /* Возвращает id пункта назначения по имени */
 const getIdByName = (destinations, name) => [...Object.values(destinations).filter((destination) => destination.name === name)][0].id;

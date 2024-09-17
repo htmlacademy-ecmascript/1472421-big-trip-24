@@ -59,7 +59,6 @@ const createEditPointTemplate = (point, offers, destinations) => {
   const currentOffers = getOffersByType(offers, type);
 
 
-
   return (
     `<li class="trip-events__item">
       <form class="event event--edit" action="#" method="post">
@@ -177,7 +176,7 @@ export default class EditPointView extends AbstractStatefulView {
 
     this.element
       .querySelector('.event__input--destination')
-      .addEventListener('input', this.#inpitDestinationHandler)
+      .addEventListener('input', this.#inpitDestinationHandler);
   }
 
   _restoreHandlers() {
@@ -202,7 +201,7 @@ export default class EditPointView extends AbstractStatefulView {
         offers: []
       });
     }
-  }
+  };
 
   #offersClickHandler = (evt) => {
     evt.preventDefault();
@@ -220,7 +219,7 @@ export default class EditPointView extends AbstractStatefulView {
         offers: togleOffers(offers, evt.target.dataset.offerId)
       });
     }
-  }
+  };
 
   #inpitDestinationHandler = (evt) => {
     /* Получаем список имен всех возможных пунктов назначения */
@@ -233,10 +232,10 @@ export default class EditPointView extends AbstractStatefulView {
         destination: getIdByName(this.#destinations, evt.target.value)
       });
     }
-  }
+  };
 
   reset(point) {
     this.updateElement(point)
-  }
+  };
 
 }
