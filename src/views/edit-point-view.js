@@ -235,7 +235,7 @@ export default class EditPointView extends AbstractStatefulView {
   };
 
   reset(point) {
-    this.updateElement(point)
-  };
+    this.updateElement(point);
+  }
 
 }
