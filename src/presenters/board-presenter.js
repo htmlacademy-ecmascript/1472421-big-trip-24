@@ -133,7 +133,3 @@ export default class BoardPresenter {
 
 }
 
-/* Сделать
-  - изменение типа маршрута,
-  - сохранение данных по нажатию на Submit
-*/

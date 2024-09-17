@@ -78,6 +78,7 @@ export default class PointPresenter {
 
   resetView() {
     if(this.#mode !== PointMode.DEFAULT){
+      this.#editPointComponent.reset(this.#point);
       this.#replaceEditPointToPoint();
     }
   }
@@ -86,13 +87,17 @@ export default class PointPresenter {
     this.#replacePointToEditPoint();
   };
 
-  #onCloseEditButtonClick = () => this.#replaceEditPointToPoint();
+  #onCloseEditButtonClick = () => {
+    this.#editPointComponent.reset(this.#point);
+    this.#replaceEditPointToPoint();
+  };
 
   #onSubmitButtonClick = () => this.#replaceEditPointToPoint();
 
   #escKeyDownHandler = (evt) => {
     if(evt.key === 'Escape'){
       evt.preventDefault();
+      this.#editPointComponent.reset(this.#point);
       this.#replaceEditPointToPoint();
     }
   };
