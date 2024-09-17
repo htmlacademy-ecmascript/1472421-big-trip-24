@@ -40,6 +40,28 @@ const isActualPoint = (point) => point.dateTo && (dayjs().isSame(dayjs(point.dat
 
 const updatePointData = (points, updatePoint) => points.map((point) => point.id === updatePoint.id ? updatePoint : point);
 
+/* Определение результата ф-ции compare при значение null одного из сравниваемых элементов */
+const getWeightForNullValue = (valueA, valueB) => {
+  if(valueA === null && valueB === null) {
+    return 0;
+  }
+
+  if(valueA === null) {
+    return 1;
+  }
+
+  if(valueB === null){
+    return -1;
+  }
+
+  return null;
+};
+
+const sortByPrice = (pointA, pointB) => getWeightForNullValue(pointA, pointB) ?? pointB.basePrice - pointA.basePrice;
+
+const sortByTime = (pointA, pointB) => getWeightForNullValue(pointA, pointB) ?? getDurationEvent(pointB.dateFrom, pointB.dateTo).asMilliseconds() - getDurationEvent(pointA.dateFrom, pointA.dateTo).asMilliseconds();
+
+
 export {
   totalOffersPrice,
   formatEditPointDate,
@@ -50,5 +72,7 @@ export {
   isFuturePoint,
   isActualPoint,
   isExpiredPoint,
-  updatePointData
+  updatePointData,
+  sortByPrice,
+  sortByTime
 };

@@ -1,4 +1,3 @@
-
 const MessageBoard = {
   EMPTY_LIST: 'Click New Event to create your first point',
   LOADING: 'Loading...',
@@ -20,6 +19,14 @@ const PointMode = {
   EDITING: 'EDITING'
 };
 
+const SortType = {
+  DAY: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFER: 'offer'
+};
+
 
 export {
   MessageBoard,
@@ -28,5 +35,6 @@ export {
   POINT_COUNT,
   EDIT_POINT_DATE_FORMAT,
   POINT_DATE_FORMAT,
-  PointMode
+  PointMode,
+  SortType
 };
