@@ -210,20 +210,20 @@ export default class EditPointView extends AbstractStatefulView {
       что бы не мутировать свойство offers у _state*/
       const offers = [...this._state.offers];
 
-      /* Записываем массив выбранных оферов
+      /* Записывает массив выбранных оферов
       c добавленным или удаченнным id офера, на котором
       сработал обработчик в зависимости от того, был
       выбран оффер или нет(т.е. был ли id офера в массиве выбранных
       оферов или нет) */
       this.updateElement({
-        offers: togleOffers(offers, evt.target.dataset.offerId)
+        offers: togleOffers(offers, Number(evt.target.dataset.offerId))
       });
     }
   };
 
   #inpitDestinationHandler = (evt) => {
     /* Получаем список имен всех возможных пунктов назначения */
-    const destinationNames = Object.values(this.#destinations).map((destination) => destination.name);
+    const destinationNames = this.#destinations.map((destination) => destination.name);
 
     /* Если введенные символы в поле ввода соответствуют имени одного из пуктов назначания */
     if(destinationNames.includes(evt.target.value)){
