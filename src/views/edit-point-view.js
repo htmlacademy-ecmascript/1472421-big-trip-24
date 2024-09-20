@@ -2,6 +2,8 @@ import { EVENT_TYPES } from '../const/points-const';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import { formatEditPointDate, getIdByName, getOffersByType, togleOffers } from '../utils/points-utils';
 import { capitalizeFirstLetter, findById } from '../utils/utils';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 
 const getEventTypelistTemplate = () => EVENT_TYPES.map((type) => (`
   <div class="event__type-item">
@@ -142,6 +144,8 @@ export default class EditPointView extends AbstractStatefulView {
   #destinations = [];
   #onCloseEditButtonClick = null;
   #onSubmitButtonClick = null;
+  #datepickerTo = null;
+  #datepickerFrom = null;
 
   constructor({point, offers, destinations, onCloseEditButtonClick, onSubmitButtonClick}) {
     super();
@@ -155,6 +159,18 @@ export default class EditPointView extends AbstractStatefulView {
 
   get template() {
     return createEditPointTemplate(this._state, this.#offers, this.#destinations);
+  }
+
+  #removeElement() {
+    super.removeElement();
+
+    if(this.#datepickerFrom || this.#datepickerTo) {
+      this.#datepickerFrom.destroy();
+      this.#datepickerTo.destroy();
+
+      this.#datepickerFrom = null;
+      this.#datepickerTo = null;
+    }
   }
 
   #setEventListeners() {
@@ -177,6 +193,8 @@ export default class EditPointView extends AbstractStatefulView {
     this.element
       .querySelector('.event__input--destination')
       .addEventListener('input', this.#inpitDestinationHandler);
+
+    this.#setDatePicker();
   }
 
   _restoreHandlers() {
@@ -232,6 +250,54 @@ export default class EditPointView extends AbstractStatefulView {
         destination: getIdByName(this.#destinations, evt.target.value)
       });
     }
+  };
+
+  #dateFromChangeHandler = ([userDate]) => {
+    this.updateElement({
+      dateFrom: userDate
+    });
+
+    this.#datepickerTo.set('minDate', this._state.dateFrom);
+  };
+
+  #dateToChangeHandler = ([userDate]) => {
+    this.updateElement({
+      dateTo: userDate
+    });
+
+    this.#datepickerFrom.set('maxDate', this._state.dateTo);
+  };
+
+  #setDatePicker = () => {
+    this.#datepickerFrom = flatpickr(
+      this.element.querySelector('#event-start-time-1'),
+      {
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._state.dateFrom,
+        onChange: this.#dateFromChangeHandler,
+        enableTime: true,
+        maxDate: this._state.dateTo,
+        locale: {
+          firstDayOfWeek: 1
+        },
+        'time_24hr': true
+      }
+    );
+
+    this.#datepickerTo = flatpickr(
+      this.element.querySelector('#event-end-time-1'),
+      {
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._state.dateTo,
+        onChange: this.#dateToChangeHandler,
+        enableTime: true,
+        minDate: this._state.dateFrom,
+        locale: {
+          firstDayOfWeek: 1
+        },
+        'time_24hr': true
+      }
+    );
   };
 
   reset(point) {
