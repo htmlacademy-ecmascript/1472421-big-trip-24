@@ -22,6 +22,11 @@ const setOffers = () => {
           id: 3,
           title: `Upgrade ${type}`,
           price: getRandomInt(1, 100)
+        },
+        {
+          id: 4,
+          title: `Upgrade ${type}`,
+          price: getRandomInt(1, 100)
         }
       ]
     }

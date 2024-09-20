@@ -7,7 +7,7 @@ dayjs.extend(duration);
 
 const totalOffersPrice = (offers) => offers.reduce((accumulator, currentValue) => accumulator + currentValue.price, 0);
 
-const formatEditPointDate = (editPointDate) => editPointDate.format(EDIT_POINT_DATE_FORMAT);
+const formatEditPointDate = (editPointDate) => dayjs(editPointDate['$d']).format(EDIT_POINT_DATE_FORMAT);
 
 const formatPointDate = (pointDate) => pointDate.format(POINT_DATE_FORMAT);
 
@@ -61,6 +61,24 @@ const sortByPrice = (pointA, pointB) => getWeightForNullValue(pointA, pointB) ??
 
 const sortByTime = (pointA, pointB) => getWeightForNullValue(pointA, pointB) ?? getDurationEvent(pointB.dateFrom, pointB.dateTo).asMilliseconds() - getDurationEvent(pointA.dateFrom, pointA.dateTo).asMilliseconds();
 
+/* Функция удаляет id оффера из массива id-шников выбранных офферов
+точки маршрута если id оффера, пришедший на вход функции
+уже есть в массиве(выбранных офферов
+точки маршрута) и добавляет id оффера
+в массив id-шников выбранных офферов, если такого
+id-шника там нет. Возвращает изменненный массив*/
+const togleOffers = (offers, offerId) => {
+  if(!offers.includes(offerId)){
+    return [...offers, offerId];
+  }
+
+  return offers.filter((offersItem) => offersItem !== offerId);
+
+};
+
+
+/* Возвращает id пункта назначения по имени */
+const getIdByName = (destinations, name) => destinations.find((destination) => destination.name === name).id;
 
 export {
   totalOffersPrice,
@@ -74,5 +92,7 @@ export {
   isExpiredPoint,
   updatePointData,
   sortByPrice,
-  sortByTime
+  sortByTime,
+  togleOffers,
+  getIdByName
 };

@@ -1,33 +1,39 @@
 import { EVENT_TYPES } from '../const/points-const';
-import AbstractView from '../framework/view/abstract-view';
-import { formatEditPointDate, getOffersByType } from '../utils/points-utils';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view';
+import { formatEditPointDate, getIdByName, getOffersByType, togleOffers } from '../utils/points-utils';
 import { capitalizeFirstLetter, findById } from '../utils/utils';
 
 const getEventTypelistTemplate = () => EVENT_TYPES.map((type) => (`
   <div class="event__type-item">
     <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
-    <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${capitalizeFirstLetter(type)}</label>
+    <label class="event__type-label  event__type-label--${type}"
+    for="event-type-${type}-1"
+    data-event-type = ${type}>
+      ${capitalizeFirstLetter(type)}
+    </label>
   </div>`
 )).join('');
 
 const getDestinationListTemplate = (destinations) => destinations.map((destination) => `<option value="${destination.name}"></option>`).join('');
 
 
-const getOffersTemplate = (offersId, offers) => offersId.map((offerId) => {
-
-  const offer = findById(offers, offerId);
-
-  return (`
+const getOffersTemplate = (offersId, offers) => offers.length > 0 ? offers.map((offer) => (`
     <div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-${offer.id}" type="checkbox" name="event-offer-luggage" checked>
-      <label class="event__offer-label" for="event-offer-luggage-${offer.id}">
+      <input class="event__offer-checkbox  visually-hidden"
+      id="event-offer-luggage-${offer.id}"
+      type="checkbox"
+      name="event-offer-luggage"
+      ${offersId.includes(offer.id) ? 'checked' : ''}
+      >
+      <label class="event__offer-label"
+      for="event-offer-luggage-${offer.id}"
+      data-offer-id = ${offer.id}>
         <span class="event__offer-title">${offer.title}</span>
         &plus;&euro;&nbsp;
         <span class="event__offer-price">${offer.price}</span>
       </label>
     </div>
-    `);
-}).join('');
+    `)).join('') : '';
 
 const getPhotosTemplate = (pictures) => pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="Event photo"></img>`).join('');
 
@@ -47,7 +53,6 @@ const getDestinationTemplate = (destination) => {
 };
 
 const createEditPointTemplate = (point, offers, destinations) => {
-
 
   const {type, destination: destinationId, dateTo, dateFrom, basePrice, offers: offersId } = point;
   const currentDestination = findById(destinations, destinationId);
@@ -131,9 +136,8 @@ const createEditPointTemplate = (point, offers, destinations) => {
 };
 
 
-export default class EditPointView extends AbstractView {
+export default class EditPointView extends AbstractStatefulView {
 
-  #point = null;
   #offers = [];
   #destinations = [];
   #onCloseEditButtonClick = null;
@@ -141,7 +145,7 @@ export default class EditPointView extends AbstractView {
 
   constructor({point, offers, destinations, onCloseEditButtonClick, onSubmitButtonClick}) {
     super();
-    this.#point = point;
+    this._setState(point);
     this.#offers = offers;
     this.#destinations = destinations;
     this.#onCloseEditButtonClick = onCloseEditButtonClick;
@@ -150,7 +154,7 @@ export default class EditPointView extends AbstractView {
   }
 
   get template() {
-    return createEditPointTemplate(this.#point, this.#offers, this.#destinations);
+    return createEditPointTemplate(this._state, this.#offers, this.#destinations);
   }
 
   #setEventListeners() {
@@ -161,6 +165,22 @@ export default class EditPointView extends AbstractView {
     this.element
       .querySelector('.event__save-btn')
       .addEventListener('submit', this.#submitButtonClickHandler);
+
+    this.element
+      .querySelector('.event__type-group')
+      .addEventListener('click', this.#eventTypeClickHandler);
+
+    this.element
+      .querySelector('.event__available-offers')
+      .addEventListener('click', this.#offersClickHandler);
+
+    this.element
+      .querySelector('.event__input--destination')
+      .addEventListener('input', this.#inpitDestinationHandler);
+  }
+
+  _restoreHandlers() {
+    this.#setEventListeners();
   }
 
   #closeEditButtonClickHandler = (evt) => {
@@ -172,4 +192,50 @@ export default class EditPointView extends AbstractView {
     evt.preventDefault();
     this.#onSubmitButtonClick();
   };
+
+  #eventTypeClickHandler = (evt) => {
+    evt.preventDefault();
+    if(evt.target.classList.contains('event__type-label')){
+      this.updateElement({
+        type: evt.target.dataset.eventType,
+        offers: []
+      });
+    }
+  };
+
+  #offersClickHandler = (evt) => {
+    evt.preventDefault();
+    if(evt.target.classList.contains('event__offer-label')){
+      /* Копируем массив выбранных оферов
+      что бы не мутировать свойство offers у _state*/
+      const offers = [...this._state.offers];
+
+      /* Записывает массив выбранных оферов
+      c добавленным или удаченнным id офера, на котором
+      сработал обработчик в зависимости от того, был
+      выбран оффер или нет(т.е. был ли id офера в массиве выбранных
+      оферов или нет) */
+      this.updateElement({
+        offers: togleOffers(offers, Number(evt.target.dataset.offerId))
+      });
+    }
+  };
+
+  #inpitDestinationHandler = (evt) => {
+    /* Получаем список имен всех возможных пунктов назначения */
+    const destinationNames = this.#destinations.map((destination) => destination.name);
+
+    /* Если введенные символы в поле ввода соответствуют имени одного из пуктов назначания */
+    if(destinationNames.includes(evt.target.value)){
+      /* Перерисовываем компонент */
+      this.updateElement({
+        destination: getIdByName(this.#destinations, evt.target.value)
+      });
+    }
+  };
+
+  reset(point) {
+    this.updateElement(point);
+  }
+
 }
