@@ -1,10 +1,10 @@
 import SortView from '../views/sort-view.js';
 import PointsListView from '../views/points-list-view.js';
-import { render } from '../framework/render.js';
-import { MessageBoard, SortType } from '../const/points-const.js';
+import { remove, render } from '../framework/render.js';
+import { MessageBoard, SortType, UpdateType, UserAction } from '../const/points-const.js';
 import ListMessageView from '../views/list-message-view.js';
 import PointPresenter from './point-presenter.js';
-import { sortByPrice, sortByTime, updatePointData } from '../utils/points-utils.js';
+import { sortByDay, sortByPrice, sortByTime } from '../utils/points-utils.js';
 
 
 export default class BoardPresenter {
@@ -16,9 +16,8 @@ export default class BoardPresenter {
 
   #pointsListComponent = new PointsListView();
   #sortComponent = null;
+  #listMessageComponent = null;
 
-  #points = [];
-  #sourcedPoints = [];
   #offers = [];
   #destinations = [];
   #currentSortType = SortType.DAY;
@@ -31,12 +30,25 @@ export default class BoardPresenter {
     this.#pointsModel = pointsModel;
     this.#offersModel = offersModel;
     this.#destinationsModel = destinationsModel;
+
+    /* Подписываемся на изменение данных модели и прокидываем функцию,
+    которая вызовется при изменении модели */
+    this.#pointsModel.addObserver(this.#modelChangeHandler);
+  }
+
+  get points(){
+    switch(this.#currentSortType) {
+      case SortType.DAY:
+        return  [...this.#pointsModel.points].sort(sortByDay);
+      case SortType.PRICE:
+        return [...this.#pointsModel.points].sort(sortByPrice);
+      case SortType.TIME:
+        return [...this.#pointsModel.points].sort(sortByTime);
+    }
   }
 
 
   init() {
-    this.#points = [...this.#pointsModel.points];
-    this.#sourcedPoints = [...this.#pointsModel.points];
     this.#offers = [...this.#offersModel.offers];
     this.#destinations = [...this.#destinationsModel.destinations];
 
@@ -48,7 +60,7 @@ export default class BoardPresenter {
 
     const pointPresenter = new PointPresenter({
       pointsListComponent: this.#pointsListComponent.element,
-      onPointChange: this.#pointChangeHandler,
+      onPointChange: this.#viewActionHandler,
       onModeChange: this.#modeChangeHandler
     });
 
@@ -60,16 +72,20 @@ export default class BoardPresenter {
   #renderPointsList = () => {
     render(this.#pointsListComponent, this.#boardContainer);
 
-    if(this.#points.length === 0){
-      render(new ListMessageView({message: MessageBoard.EMPTY_LIST}), this.#pointsListComponent.element);
+    if(this.points.length === 0){
+      this.#listMessageComponent = new ListMessageView({message: MessageBoard.EMPTY_LIST});
+      render(this.#listMessageComponent, this.#pointsListComponent.element);
       return;
     }
 
-    this.#points.forEach((point) => this.#renderPoint(point, this.#offers, this.#destinations));
+    this.points.forEach((point) => this.#renderPoint(point, this.#offers, this.#destinations));
   };
 
   #renderSort() {
-    this.#sortComponent = new SortView({onSortButtonClick: this.#onSortButtonClick});
+    this.#sortComponent = new SortView({
+      onSortButtonClick: this.#onSortButtonClick,
+      currentSortType: this.#currentSortType
+    });
     render(this.#sortComponent, this.#boardContainer);
   }
 
@@ -89,11 +105,42 @@ export default class BoardPresenter {
   был вновь вызван метод init() с обновленными данными,
   который в свою очередь прокинет обновленные данные во view и перерерисует
   view*/
-  #pointChangeHandler = (updatePoint) => {
-    this.#points = updatePointData(this.#points, updatePoint);
-    this.#sourcedPoints = updatePointData(this.#points, updatePoint);
-    this.#pointPresenters.get(updatePoint.id).init(updatePoint, this.#offers, this.#destinations);
+
+  /* Обработчик события изменения View(от действий пользователя) */
+  #viewActionHandler = (actionType, updateType, update) => {
+
+    /* В зависимгости от действия пользователя,
+    будут вызван тот или иной метод модели, соответствующий
+    действию пользователя */
+    switch(actionType) {
+      case UserAction.UPDATE_POINT:
+        this.#pointsModel.updatePoint(updateType, update);
+        break;
+      case UserAction.ADD_POINT:
+        this.#pointsModel.addPoint(updateType, update);
+        break;
+      case UserAction.DELETE_POINT:
+        this.#pointsModel.deletePoint(updateType, update);
+        break;
+    }
   };
+
+  /* Обработчик события изменения данных модели */
+  #modelChangeHandler = (updateType, data) => {
+    switch(updateType) {
+      case UpdateType.PATCH:
+        this.#pointPresenters.get(data.id).init(data, this.#offers, this.#destinations);
+        break;
+      case UpdateType.MINOR:
+        this.#clearBoard();
+        this.#renderBoard();
+        break;
+      case UpdateType.MAJOR:
+        this.#clearBoard({resetSortType: true});
+        this.#renderBoard();
+        break;
+    }
+  }
 
   #modeChangeHandler = () => {
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
@@ -104,9 +151,9 @@ export default class BoardPresenter {
       return;
     }
 
-    this.#sortPoint(sortType);
-    this.#clearPointslist();
-    this.#renderPointsList();
+    this.#clearBoard({resetSortType: true});
+    this.#currentSortType = sortType;
+    this.#renderBoard();
   };
 
   #clearPointslist = () => {
@@ -114,22 +161,19 @@ export default class BoardPresenter {
     this.#pointPresenters.clear();
   };
 
-  #sortPoint = (sortType) => {
-    switch(sortType) {
-      case SortType.DAY:
-        this.#points = [...this.#sourcedPoints];
-        break;
-      case SortType.PRICE:
-        this.#points.sort(sortByPrice);
-        break;
-      case SortType.TIME:
-        this.#points.sort(sortByTime);
-        break;
+  /* Данный синтаксис говорит, что на вход функция ожидает
+  объект(по умолчанию он пустой, если на вход ничего не передано) со свойством
+  resetSortType (по умолчанию равный false)*/
+  #clearBoard = ({resetSortType = false} = {}) => {
+
+    remove(this.#sortComponent);
+    remove(this.#listMessageComponent);
+    this.#clearPointslist();
+
+    if(resetSortType){
+      this.#currentSortType = SortType.DAY;
     }
-
-
-    this.#currentSortType = sortType;
-  };
+  }
 
 }
 

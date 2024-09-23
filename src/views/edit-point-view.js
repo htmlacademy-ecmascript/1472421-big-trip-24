@@ -180,7 +180,7 @@ export default class EditPointView extends AbstractStatefulView {
 
     this.element
       .querySelector('.event__save-btn')
-      .addEventListener('submit', this.#submitButtonClickHandler);
+      .addEventListener('click', this.#submitButtonClickHandler);
 
     this.element
       .querySelector('.event__type-group')
@@ -208,7 +208,8 @@ export default class EditPointView extends AbstractStatefulView {
 
   #submitButtonClickHandler = (evt) => {
     evt.preventDefault();
-    this.#onSubmitButtonClick();
+    console.log(this._state.dateFrom['$d'])
+    this.#onSubmitButtonClick(this._state);
   };
 
   #eventTypeClickHandler = (evt) => {
