@@ -32,7 +32,7 @@ export default class PointsModel extends Observable {
     this._notify(updateType, update);
   }
 
-  deletePoint() {
+  deletePoint(updateType, update) {
     const index = this.#points.findIndex((point) => point.id === update.id);
 
     if(index === -1){

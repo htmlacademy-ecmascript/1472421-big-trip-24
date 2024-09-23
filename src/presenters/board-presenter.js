@@ -36,15 +36,17 @@ export default class BoardPresenter {
     this.#pointsModel.addObserver(this.#modelChangeHandler);
   }
 
-  get points(){
+  get points() {
     switch(this.#currentSortType) {
       case SortType.DAY:
-        return  [...this.#pointsModel.points].sort(sortByDay);
+        return [...this.#pointsModel.points].sort(sortByDay);
       case SortType.PRICE:
         return [...this.#pointsModel.points].sort(sortByPrice);
       case SortType.TIME:
         return [...this.#pointsModel.points].sort(sortByTime);
     }
+
+    return this.#pointsModel.points;
   }
 
 
@@ -140,7 +142,7 @@ export default class BoardPresenter {
         this.#renderBoard();
         break;
     }
-  }
+  };
 
   #modeChangeHandler = () => {
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
@@ -173,7 +175,7 @@ export default class BoardPresenter {
     if(resetSortType){
       this.#currentSortType = SortType.DAY;
     }
-  }
+  };
 
 }
 

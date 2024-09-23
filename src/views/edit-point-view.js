@@ -144,16 +144,18 @@ export default class EditPointView extends AbstractStatefulView {
   #destinations = [];
   #onCloseEditButtonClick = null;
   #onSubmitButtonClick = null;
+  #onDeleteButtonClick = null;
   #datepickerTo = null;
   #datepickerFrom = null;
 
-  constructor({point, offers, destinations, onCloseEditButtonClick, onSubmitButtonClick}) {
+  constructor({point, offers, destinations, onCloseEditButtonClick, onSubmitButtonClick, onDeleteButtonClick}) {
     super();
     this._setState(point);
     this.#offers = offers;
     this.#destinations = destinations;
     this.#onCloseEditButtonClick = onCloseEditButtonClick;
     this.#onSubmitButtonClick = onSubmitButtonClick;
+    this.#onDeleteButtonClick = onDeleteButtonClick;
     this.#setEventListeners();
   }
 
@@ -194,6 +196,10 @@ export default class EditPointView extends AbstractStatefulView {
       .querySelector('.event__input--destination')
       .addEventListener('input', this.#inpitDestinationHandler);
 
+    this.element
+      .querySelector('.event__reset-btn')
+      .addEventListener('click', this.#deleteButtonClickHandler);
+
     this.#setDatePicker();
   }
 
@@ -208,8 +214,7 @@ export default class EditPointView extends AbstractStatefulView {
 
   #submitButtonClickHandler = (evt) => {
     evt.preventDefault();
-    console.log(this._state.dateFrom['$d'])
-    this.#onSubmitButtonClick(this._state);
+    this.#onSubmitButtonClick({...this._state});
   };
 
   #eventTypeClickHandler = (evt) => {
@@ -267,6 +272,11 @@ export default class EditPointView extends AbstractStatefulView {
     });
 
     this.#datepickerFrom.set('maxDate', this._state.dateTo);
+  };
+
+  #deleteButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#onDeleteButtonClick({...this._state});
   };
 
   #setDatePicker = () => {

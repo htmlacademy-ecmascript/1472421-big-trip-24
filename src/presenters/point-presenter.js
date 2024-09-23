@@ -56,7 +56,8 @@ export default class PointPresenter {
       offers: this.#offers,
       destinations: this.#destinations,
       onCloseEditButtonClick: this.#onCloseEditButtonClick,
-      onSubmitButtonClick: this.#onSubmitButtonClick
+      onSubmitButtonClick: this.#onSubmitButtonClick,
+      onDeleteButtonClick: this.#onDeleteButtonClick
     });
 
     if(preventPointComponent === null || prevEditPointComponent === null){
@@ -96,8 +97,8 @@ export default class PointPresenter {
     this.#viewActionHandler(
       UserAction.UPDATE_POINT,
       UpdateType.MINOR,
-      {...state}
-    )
+      state
+    );
     this.#replaceEditPointToPoint();
   };
 
@@ -115,6 +116,15 @@ export default class PointPresenter {
       UpdateType.PATCH,
       {...this.#point, isFavorite: !this.#point.isFavorite}
     );
+  };
+
+  #onDeleteButtonClick = (state) => {
+    this.#viewActionHandler(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      state
+    );
+    this.#replaceEditPointToPoint();
   };
 
   #replacePointToEditPoint = () => {
