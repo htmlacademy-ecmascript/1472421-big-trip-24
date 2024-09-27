@@ -19,6 +19,7 @@ export default class BoardPresenter {
   #pointsListComponent = new PointsListView();
   #sortComponent = null;
   #listMessageComponent = null;
+  #filterType= null;
 
   #offers = [];
   #destinations = [];
@@ -42,9 +43,9 @@ export default class BoardPresenter {
 
   get points() {
 
-    const filterType = this.#filterModel.filter;
+    this.#filterType = this.#filterModel.filter;
     const points = this.#pointsModel.points;
-    const filteredPoints = filter[filterType](points);
+    const filteredPoints = filter[this.#filterType](points);
 
     switch(this.#currentSortType) {
       case SortType.DAY:
@@ -84,7 +85,7 @@ export default class BoardPresenter {
     render(this.#pointsListComponent, this.#boardContainer);
 
     if(this.points.length === 0){
-      this.#listMessageComponent = new ListMessageView({message: MessageBoard.EMPTY_LIST});
+      this.#listMessageComponent = new ListMessageView({filterType: this.#filterType});
       render(this.#listMessageComponent, this.#pointsListComponent.element);
       return;
     }
