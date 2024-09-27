@@ -45,6 +45,7 @@ const isExpiredPoint = (point) => dayjs(point.dateTo) && dayjs().isAfter(dayjs(p
 
 const isActualPoint = (point) => point.dateTo && (dayjs().isSame(dayjs(point.dateFrom), 'minute') || dayjs().isAfter(dayjs(point.dateFrom), 'minute')) && (dayjs().isSame(dayjs(point.dateTo), 'minute') || dayjs().isBefore(dayjs(point.dateTo), 'minute'));
 
+const isDatesEqual = (point, updatePoint) => (dateAdapter(point.dateFrom).isSame(dateAdapter(updatePoint.dateFrom)) && dateAdapter(point.dateTo).isSame(dateAdapter(updatePoint.dateTo)));
 
 /* Определение результата ф-ции compare при значение null одного из сравниваемых элементов */
 const getWeightForNullValue = (valueA, valueB) => {
@@ -102,5 +103,6 @@ export {
   togleOffers,
   getIdByName,
   dateAdapter,
-  sortByDay
+  sortByDay,
+  isDatesEqual
 };

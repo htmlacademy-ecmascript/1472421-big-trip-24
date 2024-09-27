@@ -2,6 +2,7 @@ import PointView from '../views/point-view.js';
 import EditPointView from '../views/edit-point-view.js';
 import { remove, render,replace } from '../framework/render';
 import { PointMode, UpdateType, UserAction } from '../const/points-const.js';
+import { isDatesEqual } from '../utils/points-utils.js';
 
 export default class PointPresenter {
   #point = null;
@@ -94,9 +95,13 @@ export default class PointPresenter {
   };
 
   #onSubmitButtonClick = (state) => {
+
+    const isMinorUpdate = !isDatesEqual(this.#point, state);
+    console.log(isMinorUpdate)
+
     this.#viewActionHandler(
       UserAction.UPDATE_POINT,
-      UpdateType.MINOR,
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
       state
     );
     this.#replaceEditPointToPoint();
@@ -124,7 +129,6 @@ export default class PointPresenter {
       UpdateType.MINOR,
       state
     );
-    this.#replaceEditPointToPoint();
   };
 
   #replacePointToEditPoint = () => {

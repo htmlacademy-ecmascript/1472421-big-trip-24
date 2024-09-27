@@ -2,22 +2,26 @@ import { FiltersPoint } from '../const/filter-const';
 import AbstractView from '../framework/view/abstract-view';
 import { capitalizeFirstLetter } from '../utils/utils';
 
-const generateFilterButton = (filters) => filters.map((filter) => (`
+const generateFilterButton = (filter, currentFilterType) => {
+
+  const {type, name, count} = filter;
+
+  return (`
   <div class="trip-filters__filter">
     <input
-      id="filter-${filter.type}"
+      id="filter-${name}"
       class="trip-filters__filter-input  visually-hidden"
       type="radio"
       name="trip-filter"
-      value="${filter.type}"
-      ${filter.type === FiltersPoint.EVERYTHING ? 'checked' : ''}
-      ${filter.count === 0 ? 'disabled' : ''}
+      value="${type}"
+      ${type === currentFilterType ? 'checked' : ''}
+      ${count === 0 ? 'disabled' : ''}
     >
-    <label class="trip-filters__filter-label" for="filter-everything">${capitalizeFirstLetter(filter.type)}</label>
+    <label class="trip-filters__filter-label" for="filter-${name}" value="${type}">${capitalizeFirstLetter(type)}</label>
   </div>
-`)).join('');
+`)};
 
-function createFilterTemplate(filters) {
+function createFilterTemplate(filters, currentFilterType) {
 
   return (
     `<div class="trip-main__trip-controls  trip-controls">
@@ -25,7 +29,11 @@ function createFilterTemplate(filters) {
         <h2 class="visually-hidden">Filter events</h2>
         <form class="trip-filters" action="#" method="get">
 
-          ${generateFilterButton(filters)}
+          ${
+            filters
+              .map((filter) => generateFilterButton(filter, currentFilterType))
+              .join('')
+          }
           <button class="visually-hidden" type="submit">Accept filter</button>
         </form>
       </div>
@@ -36,13 +44,25 @@ function createFilterTemplate(filters) {
 export default class FilterView extends AbstractView{
 
   #filters = null;
+  #currentFilterType = null;
+  #onFilterTypeChange = null;
 
-  constructor({filters}){
+  constructor({filters, currentFilterType, onFilterTypeChange}){
     super();
     this.#filters = filters;
+    this.#currentFilterType = currentFilterType;
+    this.#onFilterTypeChange = onFilterTypeChange;
+
+    this.element
+      .addEventListener('change', this.#eventTypeChangeHandler);
   }
 
   get template() {
-    return createFilterTemplate(this.#filters);
+    return createFilterTemplate(this.#filters, this.#currentFilterType);
+  }
+
+  #eventTypeChangeHandler = (evt) => {
+    evt.preventDefault();
+    this.#onFilterTypeChange(evt.target.value);
   }
 }
