@@ -1,7 +1,7 @@
-import { FiltersPoint, filter } from "../const/filter-const";
-import { UpdateType } from "../const/points-const";
-import { remove, render, replace } from "../framework/render";
-import FilterView from "../views/filter-view";
+import { FiltersPoint, filter } from '../const/filter-const';
+import { UpdateType } from '../const/points-const';
+import { remove, render, replace } from '../framework/render';
+import FilterView from '../views/filter-view';
 
 export default class FilterPresenter {
 
@@ -43,11 +43,10 @@ export default class FilterPresenter {
         name: 'present',
         count: filter[FiltersPoint.PRESENT](points).length
       },
-    ]
+    ];
   }
 
   init() {
-    console.log(this.#pointsModel);
     const filters = this.filters;
     const prevFilterComponent = this.#filterComponent;
 

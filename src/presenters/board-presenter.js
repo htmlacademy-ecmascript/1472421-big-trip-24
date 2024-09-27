@@ -5,6 +5,7 @@ import { MessageBoard, SortType, UpdateType, UserAction } from '../const/points-
 import ListMessageView from '../views/list-message-view.js';
 import PointPresenter from './point-presenter.js';
 import { sortByDay, sortByPrice, sortByTime } from '../utils/points-utils.js';
+import { filter } from '../const/filter-const.js';
 
 
 export default class BoardPresenter {
@@ -13,6 +14,7 @@ export default class BoardPresenter {
   #pointsModel = null;
   #offersModel = null;
   #destinationsModel = null;
+  #filterModel = null;
 
   #pointsListComponent = new PointsListView();
   #sortComponent = null;
@@ -25,28 +27,35 @@ export default class BoardPresenter {
   #pointPresenters = new Map();
 
 
-  constructor({boardContainer, pointsModel, offersModel, destinationsModel}) {
+  constructor({boardContainer, pointsModel, offersModel, destinationsModel, filterModel}) {
     this.#boardContainer = boardContainer;
     this.#pointsModel = pointsModel;
     this.#offersModel = offersModel;
     this.#destinationsModel = destinationsModel;
+    this.#filterModel = filterModel;
 
     /* Подписываемся на изменение данных модели и прокидываем функцию,
     которая вызовется при изменении модели */
     this.#pointsModel.addObserver(this.#modelChangeHandler);
+    this.#filterModel.addObserver(this.#modelChangeHandler);
   }
 
   get points() {
+
+    const filterType = this.#filterModel.filter;
+    const points = this.#pointsModel.points;
+    const filteredPoints = filter[filterType](points);
+
     switch(this.#currentSortType) {
       case SortType.DAY:
-        return [...this.#pointsModel.points].sort(sortByDay);
+        return filteredPoints.sort(sortByDay);
       case SortType.PRICE:
-        return [...this.#pointsModel.points].sort(sortByPrice);
+        return filteredPoints.sort(sortByPrice);
       case SortType.TIME:
-        return [...this.#pointsModel.points].sort(sortByTime);
+        return filteredPoints.sort(sortByTime);
     }
 
-    return this.#pointsModel.points;
+    return filteredPoints;
   }
 
 

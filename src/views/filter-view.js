@@ -1,4 +1,3 @@
-import { FiltersPoint } from '../const/filter-const';
 import AbstractView from '../framework/view/abstract-view';
 import { capitalizeFirstLetter } from '../utils/utils';
 
@@ -7,19 +6,20 @@ const generateFilterButton = (filter, currentFilterType) => {
   const {type, name, count} = filter;
 
   return (`
-  <div class="trip-filters__filter">
-    <input
-      id="filter-${name}"
-      class="trip-filters__filter-input  visually-hidden"
-      type="radio"
-      name="trip-filter"
-      value="${type}"
-      ${type === currentFilterType ? 'checked' : ''}
-      ${count === 0 ? 'disabled' : ''}
-    >
-    <label class="trip-filters__filter-label" for="filter-${name}" value="${type}">${capitalizeFirstLetter(type)}</label>
-  </div>
-`)};
+    <div class="trip-filters__filter">
+      <input
+        id="filter-${name}"
+        class="trip-filters__filter-input  visually-hidden"
+        type="radio"
+        name="trip-filter"
+        value="${type}"
+        ${type === currentFilterType ? 'checked' : ''}
+        ${count === 0 ? 'disabled' : ''}
+      >
+      <label class="trip-filters__filter-label" for="filter-${name}" value="${type}">${capitalizeFirstLetter(type)}</label>
+    </div>
+  `);
+};
 
 function createFilterTemplate(filters, currentFilterType) {
 
@@ -29,11 +29,7 @@ function createFilterTemplate(filters, currentFilterType) {
         <h2 class="visually-hidden">Filter events</h2>
         <form class="trip-filters" action="#" method="get">
 
-          ${
-            filters
-              .map((filter) => generateFilterButton(filter, currentFilterType))
-              .join('')
-          }
+        ${filters.map((filter) => generateFilterButton(filter, currentFilterType)).join('')}
           <button class="visually-hidden" type="submit">Accept filter</button>
         </form>
       </div>
@@ -64,5 +60,5 @@ export default class FilterView extends AbstractView{
   #eventTypeChangeHandler = (evt) => {
     evt.preventDefault();
     this.#onFilterTypeChange(evt.target.value);
-  }
+  };
 }

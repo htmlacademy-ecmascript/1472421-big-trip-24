@@ -1,5 +1,5 @@
-import { FiltersPoint } from "../const/filter-const";
-import Observable from "../framework/observable";
+import { FiltersPoint } from '../const/filter-const';
+import Observable from '../framework/observable';
 
 
 export default class FilterModel extends Observable {

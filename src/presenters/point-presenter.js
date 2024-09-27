@@ -97,7 +97,6 @@ export default class PointPresenter {
   #onSubmitButtonClick = (state) => {
 
     const isMinorUpdate = !isDatesEqual(this.#point, state);
-    console.log(isMinorUpdate)
 
     this.#viewActionHandler(
       UserAction.UPDATE_POINT,
