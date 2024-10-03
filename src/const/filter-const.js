@@ -20,7 +20,7 @@ const NoPointTextByFilter = {
   [FiltersPoint.FUTURE]: 'There are no future events now',
   [FiltersPoint.PAST]: 'There are no past events now',
   [FiltersPoint.PRESENT]: 'There are no present events now',
-}
+};
 
 export {
   FiltersPoint,

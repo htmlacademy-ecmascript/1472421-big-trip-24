@@ -86,7 +86,10 @@ const togleOffers = (offers, offerId) => {
 
 
 /* Возвращает id пункта назначения по имени */
-const getIdByName = (destinations, name) => destinations.find((destination) => destination.name === name).id;
+const getIdByName = (destinations, name) => destinations.find((destination) => destination.name === name).id ?? null;
+
+
+const inputNameFilter = (destinationNameArray, inputString) => destinationNameArray.filter((destinationName) => destinationName.toLowerCase().slice(0, inputString.length) === inputString.toLowerCase());
 
 export {
   totalOffersPrice,
@@ -104,5 +107,6 @@ export {
   getIdByName,
   dateAdapter,
   sortByDay,
-  isDatesEqual
+  isDatesEqual,
+  inputNameFilter
 };

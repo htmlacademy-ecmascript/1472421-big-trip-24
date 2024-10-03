@@ -39,6 +39,17 @@ const UpdateType = {
   MAJOR: 'MAJOR'
 };
 
+const BLANK_POINT = {
+  id: '',
+  basePrice: 0,
+  dateFrom: null,
+  dateTo: null,
+  destination: null,
+  isFavorite: 0,
+  offers: [],
+  type: EVENT_TYPES[5]
+};
+
 
 export {
   MessageBoard,
@@ -50,5 +61,6 @@ export {
   PointMode,
   SortType,
   UserAction,
-  UpdateType
+  UpdateType,
+  BLANK_POINT
 };

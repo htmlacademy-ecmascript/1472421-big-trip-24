@@ -15,7 +15,6 @@ export default class ListMessageView extends AbstractView{
   }
 
   get template() {
-    console.log(this.#filterType)
     return createEmptyListPointsTemplate(this.#filterType);
   }
 }

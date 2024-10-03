@@ -3,7 +3,7 @@ import { capitalizeFirstLetter } from '../utils/utils';
 
 const generateFilterButton = (filter, currentFilterType) => {
 
-  const {type, name, count} = filter;
+  const {type, name} = filter;
 
   return (`
     <div class="trip-filters__filter">

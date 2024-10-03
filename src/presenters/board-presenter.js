@@ -1,11 +1,12 @@
 import SortView from '../views/sort-view.js';
 import PointsListView from '../views/points-list-view.js';
 import { remove, render } from '../framework/render.js';
-import { MessageBoard, SortType, UpdateType, UserAction } from '../const/points-const.js';
+import { SortType, UpdateType, UserAction } from '../const/points-const.js';
 import ListMessageView from '../views/list-message-view.js';
 import PointPresenter from './point-presenter.js';
 import { sortByDay, sortByPrice, sortByTime } from '../utils/points-utils.js';
-import { filter } from '../const/filter-const.js';
+import { FiltersPoint, filter } from '../const/filter-const.js';
+import NewPointPresenter from './new-point-presenter.js';
 
 
 export default class BoardPresenter {
@@ -19,13 +20,14 @@ export default class BoardPresenter {
   #pointsListComponent = new PointsListView();
   #sortComponent = null;
   #listMessageComponent = null;
-  #filterType= null;
+  #filterType = null;
 
   #offers = [];
   #destinations = [];
   #currentSortType = SortType.DAY;
 
   #pointPresenters = new Map();
+  #newPointPresenter = null;
 
 
   constructor({boardContainer, pointsModel, offersModel, destinationsModel, filterModel}) {
@@ -34,6 +36,11 @@ export default class BoardPresenter {
     this.#offersModel = offersModel;
     this.#destinationsModel = destinationsModel;
     this.#filterModel = filterModel;
+
+    this.#newPointPresenter = new NewPointPresenter({
+      pointListContainer: this.#pointsListComponent,
+      onPointChange: this.#viewActionHandler
+    });
 
     /* Подписываемся на изменение данных модели и прокидываем функцию,
     которая вызовется при изменении модели */
@@ -155,6 +162,7 @@ export default class BoardPresenter {
   };
 
   #modeChangeHandler = () => {
+    this.#newPointPresenter.destroy();
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
   };
 
@@ -180,12 +188,18 @@ export default class BoardPresenter {
 
     remove(this.#sortComponent);
     remove(this.#listMessageComponent);
+    this.#newPointPresenter.destroy();
     this.#clearPointslist();
 
     if(resetSortType){
       this.#currentSortType = SortType.DAY;
     }
   };
+
+  createPoint() {
+    this.#filterModel.setFilter(UpdateType.MAJOR, FiltersPoint.EVERYTHING);
+    this.#newPointPresenter.init(this.#offers, this.#destinations);
+  }
 
 }
 
