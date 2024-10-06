@@ -7,8 +7,14 @@ import DestinationsModel from './model/destinations-model.js';
 import FilterModel from './model/filter-model.js';
 import FilterPresenter from './presenters/filter-presenter.js';
 import NewPointButtonView from './views/new-point-button-view.js';
+import PointApiService from './point-api-service.js';
 
-const pointsModel = new PointsModel();
+const END_POINT = 'https://24.objects.htmlacademy.pro/big-trip';
+const AUTHORIZATION = 'Basic 24FefwFf423Fvsz';
+
+const pointsModel = new PointsModel({
+  pointApiService: new PointApiService(END_POINT, AUTHORIZATION)
+});
 const offersModel = new OffersModel();
 const destinationsModel = new DestinationsModel();
 const filterModel = new FilterModel();
