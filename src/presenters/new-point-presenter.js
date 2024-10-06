@@ -31,7 +31,6 @@ export default class NewPointPresenter {
       destinations: this.#destinations,
       onSubmitButtonClick: this.#onSubmitButtonClick,
       onDeleteButtonClick: this.#onDeleteButtonClick,
-      isNewPint: true
     });
 
     render(this.#editPointComponent, this.#pointListContainer.element, RenderPosition.AFTERBEGIN);

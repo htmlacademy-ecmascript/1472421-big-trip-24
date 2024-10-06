@@ -47,7 +47,8 @@ const BLANK_POINT = {
   destination: null,
   isFavorite: 0,
   offers: [],
-  type: EVENT_TYPES[5]
+  type: EVENT_TYPES[5],
+  isNewPoint: true
 };
 
 

@@ -60,7 +60,7 @@ const getDestinationTemplate = (destination) => {
   `);
 };
 
-const getButtons = (isNewPoint) => (`
+const getButtonsTemplate = (isNewPoint) => (`
   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
   <button class="event__reset-btn" type="reset">${isNewPoint ? 'Close' : 'Delete'}</button>
   ${isNewPoint ? '' : `<button class="event__rollup-btn" type="button">
@@ -68,9 +68,9 @@ const getButtons = (isNewPoint) => (`
 </button>`}
 `);
 
-const createEditPointTemplate = (point, offers, destinations, isNewPoint) => {
+const createEditPointTemplate = (point, offers, destinations) => {
 
-  const {type, destination: destinationId, dateTo, dateFrom, basePrice, offers: offersId } = point;
+  const {type, destination: destinationId, dateTo, dateFrom, basePrice, offers: offersId, isNewPoint } = point;
   const currentDestination = findById(destinations, destinationId) ?? '';
   const currentOffers = getOffersByType(offers, type);
 
@@ -121,7 +121,7 @@ const createEditPointTemplate = (point, offers, destinations, isNewPoint) => {
             <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
           </div>
 
-          ${getButtons(isNewPoint)}
+          ${getButtonsTemplate(isNewPoint ?? false)}
         </header>
         <section class="event__details">
           <section class="event__section  event__section--offers">
@@ -157,10 +157,9 @@ export default class EditPointView extends AbstractStatefulView {
   #onDeleteButtonClick = null;
   #datepickerTo = null;
   #datepickerFrom = null;
-  #isNewPoint = false;
 
 
-  constructor({point = BLANK_POINT, offers, destinations, onCloseEditButtonClick, onSubmitButtonClick, onDeleteButtonClick, isNewPoint = false}) {
+  constructor({point = BLANK_POINT, offers, destinations, onCloseEditButtonClick, onSubmitButtonClick, onDeleteButtonClick}) {
     super();
     this._setState(point);
     this.#offers = offers;
@@ -168,12 +167,13 @@ export default class EditPointView extends AbstractStatefulView {
     this.#onCloseEditButtonClick = onCloseEditButtonClick;
     this.#onSubmitButtonClick = onSubmitButtonClick;
     this.#onDeleteButtonClick = onDeleteButtonClick;
+
     this.#setEventListeners();
-    this.#isNewPoint = isNewPoint;
   }
 
   get template() {
-    return createEditPointTemplate(this._state, this.#offers, this.#destinations, this.#isNewPoint);
+
+    return createEditPointTemplate(this._state, this.#offers, this.#destinations);
   }
 
   #removeElement() {
@@ -189,9 +189,11 @@ export default class EditPointView extends AbstractStatefulView {
   }
 
   #setEventListeners() {
-    this.element
-      .querySelector('.event__rollup-btn')
-      .addEventListener('click', this.#closeEditButtonClickHandler);
+    if(!this._state.isNewPoint){
+      this.element
+        .querySelector('.event__rollup-btn')
+        .addEventListener('click', this.#closeEditButtonClickHandler);
+    }
 
     this.element
       .querySelector('.event__save-btn')
@@ -274,7 +276,7 @@ export default class EditPointView extends AbstractStatefulView {
     /* Получаем список имен всех возможных пунктов назначения */
     const destinationNames = this.#destinations.map((destination) => destination.name);
 
-    /* Если введенные символы в поле ввода соответствуют имени одного из пуктов назначания */
+    /* Если введенные символы в поле ввода соответствуют имени одного из пунктов назначания */
     if(destinationNames.includes(evt.target.value)){
       /* Перерисовываем компонент */
       this.updateElement({
