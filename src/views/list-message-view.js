@@ -1,19 +1,20 @@
+import { NoPointTextByFilter } from '../const/filter-const';
 import AbstractView from '../framework/view/abstract-view';
 
-function createEmptyListPointsTemplate(message) {
-  return `<p class="trip-events__msg">${message}</p>`;
+function createEmptyListPointsTemplate(filterType) {
+  return `<p class="trip-events__msg">${NoPointTextByFilter[filterType]}</p>`;
 }
 
 export default class ListMessageView extends AbstractView{
 
-  #message = null;
+  #filterType = null;
 
-  constructor({message}){
+  constructor({filterType}){
     super();
-    this.#message = message;
+    this.#filterType = filterType;
   }
 
   get template() {
-    return createEmptyListPointsTemplate(this.#message);
+    return createEmptyListPointsTemplate(this.#filterType);
   }
 }

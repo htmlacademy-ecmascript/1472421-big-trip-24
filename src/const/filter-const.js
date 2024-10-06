@@ -15,7 +15,15 @@ const filter = {
   [FiltersPoint.PAST]: (points) => points.filter((point) => isExpiredPoint(point))
 };
 
+const NoPointTextByFilter = {
+  [FiltersPoint.EVERYTHING]: 'Click New Event to create your first point',
+  [FiltersPoint.FUTURE]: 'There are no future events now',
+  [FiltersPoint.PAST]: 'There are no past events now',
+  [FiltersPoint.PRESENT]: 'There are no present events now',
+};
+
 export {
   FiltersPoint,
-  filter
+  filter,
+  NoPointTextByFilter
 };

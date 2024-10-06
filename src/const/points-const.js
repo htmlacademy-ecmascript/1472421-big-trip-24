@@ -27,6 +27,30 @@ const SortType = {
   OFFER: 'offer'
 };
 
+const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT'
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR'
+};
+
+const BLANK_POINT = {
+  id: '',
+  basePrice: 0,
+  dateFrom: null,
+  dateTo: null,
+  destination: null,
+  isFavorite: 0,
+  offers: [],
+  type: EVENT_TYPES[5],
+  isNewPoint: true
+};
+
 
 export {
   MessageBoard,
@@ -36,5 +60,8 @@ export {
   EDIT_POINT_DATE_FORMAT,
   POINT_DATE_FORMAT,
   PointMode,
-  SortType
+  SortType,
+  UserAction,
+  UpdateType,
+  BLANK_POINT
 };

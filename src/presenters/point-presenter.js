@@ -1,7 +1,8 @@
 import PointView from '../views/point-view.js';
 import EditPointView from '../views/edit-point-view.js';
 import { remove, render,replace } from '../framework/render';
-import { PointMode } from '../const/points-const.js';
+import { PointMode, UpdateType, UserAction } from '../const/points-const.js';
+import { isDatesEqual } from '../utils/points-utils.js';
 
 export default class PointPresenter {
   #point = null;
@@ -12,14 +13,14 @@ export default class PointPresenter {
   #editPointComponent = null;
   #pointsListComponent = null;
 
-  #pointChangeHandler = null;
+  #viewActionHandler = null;
   #modeChangeHandler = null;
 
   #mode = PointMode.DEFAULT;
 
   constructor({pointsListComponent, onPointChange, onModeChange}){
     this.#pointsListComponent = pointsListComponent;
-    this.#pointChangeHandler = onPointChange;
+    this.#viewActionHandler = onPointChange;
     this.#modeChangeHandler = onModeChange;
   }
 
@@ -56,7 +57,8 @@ export default class PointPresenter {
       offers: this.#offers,
       destinations: this.#destinations,
       onCloseEditButtonClick: this.#onCloseEditButtonClick,
-      onSubmitButtonClick: this.#onSubmitButtonClick
+      onSubmitButtonClick: this.#onSubmitButtonClick,
+      onDeleteButtonClick: this.#onDeleteButtonClick
     });
 
     if(preventPointComponent === null || prevEditPointComponent === null){
@@ -92,7 +94,17 @@ export default class PointPresenter {
     this.#replaceEditPointToPoint();
   };
 
-  #onSubmitButtonClick = () => this.#replaceEditPointToPoint();
+  #onSubmitButtonClick = (state) => {
+
+    const isMinorUpdate = !isDatesEqual(this.#point, state);
+
+    this.#viewActionHandler(
+      UserAction.UPDATE_POINT,
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      state
+    );
+    this.#replaceEditPointToPoint();
+  };
 
   #escKeyDownHandler = (evt) => {
     if(evt.key === 'Escape'){
@@ -103,7 +115,19 @@ export default class PointPresenter {
   };
 
   #onFavoriteClick = () => {
-    this.#pointChangeHandler({...this.#point, isFavorite: !this.#point.isFavorite});
+    this.#viewActionHandler(
+      UserAction.UPDATE_POINT,
+      UpdateType.PATCH,
+      {...this.#point, isFavorite: !this.#point.isFavorite}
+    );
+  };
+
+  #onDeleteButtonClick = (state) => {
+    this.#viewActionHandler(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      state
+    );
   };
 
   #replacePointToEditPoint = () => {
