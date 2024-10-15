@@ -36,7 +36,8 @@ const UserAction = {
 const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
-  MAJOR: 'MAJOR'
+  MAJOR: 'MAJOR',
+  INIT: 'INIT'
 };
 
 const BLANK_POINT = {
@@ -51,6 +52,13 @@ const BLANK_POINT = {
   isNewPoint: true
 };
 
+const RequestMethod = {
+  GET: 'GET',
+  POST: 'POST',
+  PUT: 'PUT',
+  PATCH: 'PATCH'
+};
+
 
 export {
   MessageBoard,
@@ -63,5 +71,6 @@ export {
   SortType,
   UserAction,
   UpdateType,
-  BLANK_POINT
+  BLANK_POINT,
+  RequestMethod
 };

@@ -7,35 +7,33 @@ import PointPresenter from './point-presenter.js';
 import { sortByDay, sortByPrice, sortByTime } from '../utils/points-utils.js';
 import { FiltersPoint, filter } from '../const/filter-const.js';
 import NewPointPresenter from './new-point-presenter.js';
+import LoadingView from '../views/loading-view.js';
 
 
 export default class BoardPresenter {
 
   #boardContainer = null;
   #pointsModel = null;
-  #offersModel = null;
-  #destinationsModel = null;
   #filterModel = null;
 
   #pointsListComponent = new PointsListView();
+  #loadingComponent = new LoadingView();
   #sortComponent = null;
   #listMessageComponent = null;
   #filterType = null;
 
-  #offers = [];
-  #destinations = [];
   #currentSortType = SortType.DAY;
+  #isLoading = true;
 
   #pointPresenters = new Map();
   #newPointPresenter = null;
 
 
-  constructor({boardContainer, pointsModel, offersModel, destinationsModel, filterModel}) {
+  constructor({boardContainer, pointsModel,filterModel}) {
     this.#boardContainer = boardContainer;
     this.#pointsModel = pointsModel;
-    this.#offersModel = offersModel;
-    this.#destinationsModel = destinationsModel;
     this.#filterModel = filterModel;
+
 
     this.#newPointPresenter = new NewPointPresenter({
       pointListContainer: this.#pointsListComponent,
@@ -66,12 +64,20 @@ export default class BoardPresenter {
     return filteredPoints;
   }
 
+  get offers() {
+    return this.#pointsModel.offers;
+  }
+
+  get destinations() {
+    return this.#pointsModel.destinations;
+  }
 
   init() {
-    this.#offers = [...this.#offersModel.offers];
-    this.#destinations = [...this.#destinationsModel.destinations];
-
     this.#renderBoard();
+  }
+
+  #renderLoading() {
+    render(this.#loadingComponent, this.#boardContainer);
   }
 
 
@@ -97,7 +103,7 @@ export default class BoardPresenter {
       return;
     }
 
-    this.points.forEach((point) => this.#renderPoint(point, this.#offers, this.#destinations));
+    this.points.forEach((point) => this.#renderPoint(point, this.offers, this.destinations));
   };
 
   #renderSort() {
@@ -109,6 +115,10 @@ export default class BoardPresenter {
   }
 
   #renderBoard() {
+    if(this.#isLoading){
+      this.#renderLoading();
+      return;
+    }
     this.#renderSort();
     this.#renderPointsList();
   }
@@ -148,7 +158,7 @@ export default class BoardPresenter {
   #modelChangeHandler = (updateType, data) => {
     switch(updateType) {
       case UpdateType.PATCH:
-        this.#pointPresenters.get(data.id).init(data, this.#offers, this.#destinations);
+        this.#pointPresenters.get(data.id).init(data, this.offers, this.destinations);
         break;
       case UpdateType.MINOR:
         this.#clearBoard();
@@ -156,6 +166,12 @@ export default class BoardPresenter {
         break;
       case UpdateType.MAJOR:
         this.#clearBoard({resetSortType: true});
+        this.#renderBoard();
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        /* this.#clearBoard({resetSortType: true}); */
+        remove(this.#loadingComponent);
         this.#renderBoard();
         break;
     }
@@ -188,6 +204,8 @@ export default class BoardPresenter {
 
     remove(this.#sortComponent);
     remove(this.#listMessageComponent);
+    remove(this.#loadingComponent);
+
     this.#newPointPresenter.destroy();
     this.#clearPointslist();
 
@@ -198,7 +216,7 @@ export default class BoardPresenter {
 
   createPoint() {
     this.#filterModel.setFilter(UpdateType.MAJOR, FiltersPoint.EVERYTHING);
-    this.#newPointPresenter.init(this.#offers, this.#destinations);
+    this.#newPointPresenter.init(this.offers, this.destinations);
   }
 
 }

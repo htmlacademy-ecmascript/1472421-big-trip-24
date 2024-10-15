@@ -3,13 +3,13 @@ import { dateAdapter, formatPointDate, getDurationEvent, getOffersByType } from 
 import { capitalizeFirstLetter, findById } from '../utils/utils';
 
 const getSelectedOffersTemplate = (offersId, offers) => offersId.map((offerId) => {
-  const offer = findById(offers, offerId);
+  const offer = findById(offers, offerId) ?? '';
 
   return (`
     <li class="event__offer">
-      <span class="event__offer-title">${offer.title}</span>
+      <span class="event__offer-title">${offer?.title}</span>
       &plus;&euro;&nbsp;
-      <span class="event__offer-price">${offer.price}</span>
+      <span class="event__offer-price">${offer?.price}</span>
     </li>
   `);
 }).join('');
@@ -18,8 +18,8 @@ const getSelectedOffersTemplate = (offersId, offers) => offersId.map((offerId) =
 const createPointTemplate = (point, offers, destinations) => {
 
   const {type, destination: destinationId, isFavorite, offers: offersId, dateFrom, dateTo, basePrice} = point;
-  const currentDestination = findById(destinations, destinationId);
-  const currentOffers = getOffersByType(offers, type);
+  const currentDestination = findById(destinations, destinationId) ?? '';
+  const currentOffers = getOffersByType(offers, type) ?? '';
 
   return (
     `<li class="trip-events__item">

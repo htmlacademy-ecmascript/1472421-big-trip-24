@@ -1,27 +1,46 @@
 import dayjs from 'dayjs';
 import Observable from '../framework/observable';
 import { generationPoints } from '../mocks/point-mock';
+import { UpdateType } from '../const/points-const';
 
 
 export default class PointsModel extends Observable {
 
-  #points = generationPoints();
+  #points = [];
+  #offers = [];
+  #destinations = [];
   #pointApiService = null;
 
   constructor({pointApiService}) {
     super();
     this.#pointApiService = pointApiService;
-
-    this.#pointApiService.points.then((points) => {
-      console.log(points.map(this.#adaptToClient));
-
-    });
   }
-
-
 
   get points() {
     return this.#points;
+  }
+
+  get offers() {
+    return this.#offers;
+  }
+
+  get destinations() {
+    return this.#destinations;
+  }
+
+  async init() {
+    try {
+      const points = await this.#pointApiService.points;
+      this.#destinations = await this.#pointApiService.destinations;
+      this.#offers = await this.#pointApiService.offers;
+      this.#points = points.map(this.#adaptToClient);
+    }catch(err){
+      this.#points = [];
+      this.#offers = [];
+      this.#destinations = [];
+    }
+
+    this._notify(UpdateType.INIT);
   }
 
   updatePoint(updateType, update) {
@@ -68,7 +87,7 @@ export default class PointsModel extends Observable {
       dateFrom: point['date_from'] !== null ? dayjs(point['date_from']) : point['date_from'],
       dateTo: point['date_to'] !== null ? dayjs(point['date_to']) : point['date_to'],
       isFavorite: point['is_favorite']
-    }
+    };
 
     delete adaptedPoint['base_price'];
     delete adaptedPoint['date_from'];
