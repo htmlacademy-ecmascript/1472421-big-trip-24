@@ -1,16 +1,20 @@
 import BoardPresenter from './presenters/board-presenter.js';
 import InfoView from './views/info-view.js';
 import { render } from './framework/render.js';
-import PointsModel from './model/point-model.js';
-import OffersModel from './model/offers-model.js';
-import DestinationsModel from './model/destinations-model.js';
+import PointsModel from './model/points-model.js';
 import FilterModel from './model/filter-model.js';
 import FilterPresenter from './presenters/filter-presenter.js';
 import NewPointButtonView from './views/new-point-button-view.js';
+import PointApiService from './point-api-service.js';
 
-const pointsModel = new PointsModel();
-const offersModel = new OffersModel();
-const destinationsModel = new DestinationsModel();
+
+const END_POINT = 'https://24.objects.htmlacademy.pro/big-trip';
+const AUTHORIZATION = 'Basic 24FefwFf4ge23Fvsz';
+
+const pointsModel = new PointsModel({
+  pointApiService: new PointApiService(END_POINT, AUTHORIZATION)
+});
+
 const filterModel = new FilterModel();
 
 
@@ -30,8 +34,6 @@ const filterPresenter = new FilterPresenter({
 const boardPresenter = new BoardPresenter({
   boardContainer,
   pointsModel,
-  offersModel,
-  destinationsModel,
   filterModel
 });
 
@@ -43,7 +45,10 @@ const newPointButtonComponent = new NewPointButtonView({
   onNewPointButtonClick: newPointButtonClickHandler
 });
 
-filterPresenter.init();
-render(newPointButtonComponent, headerContainer);
-boardPresenter.init();
 
+filterPresenter.init();
+boardPresenter.init();
+pointsModel.init()
+  .finally(() => {
+    render(newPointButtonComponent, headerContainer);
+  });

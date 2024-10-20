@@ -19,44 +19,56 @@ const getEventTypelistTemplate = () => EVENT_TYPES.map((type) => (`
 const getDestinationListTemplate = (destinations) => destinations.map((destination) => `<option value="${destination.name}"></option>`).join('');
 
 
-const getOffersTemplate = (offersId, offers) => offers.length > 0 ? offers.map((offer) => (`
-    <div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden"
-      id="event-offer-luggage-${offer.id}"
-      type="checkbox"
-      name="event-offer-luggage"
-      ${offersId.includes(offer.id) ? 'checked' : ''}
-      >
-      <label class="event__offer-label"
-      for="event-offer-luggage-${offer.id}"
-      data-offer-id = ${offer.id}>
-        <span class="event__offer-title">${offer.title}</span>
-        &plus;&euro;&nbsp;
-        <span class="event__offer-price">${offer.price}</span>
-      </label>
-    </div>
-    `)).join('') : '';
+const getOffersTemplate = (offersId, offers) => offers.length > 0 ? `
 
-const getPhotosTemplate = (pictures) => pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="Event photo"></img>`).join('');
+  <section class="event__section  event__section--offers">
+    <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+
+    <div class="event__available-offers">
+      ${ offers.map((offer) => (`
+
+      <div class="event__offer-selector">
+        <input class="event__offer-checkbox  visually-hidden"
+        id="event-offer-luggage-${offer.id}"
+        type="checkbox"
+        name="event-offer-luggage"
+        ${offersId.includes(offer.id) ? 'checked' : ''}
+        >
+        <label class="event__offer-label"
+        for="event-offer-luggage-${offer.id}"
+        data-offer-id = ${offer.id}>
+          <span class="event__offer-title">${offer.title}</span>
+          &plus;&euro;&nbsp;
+          <span class="event__offer-price">${offer.price}</span>
+        </label>
+      </div>
+      `)).join('')}
+    </div>
+  </section>
+
+` : '';
+
+const getPhotosTemplate = (pictures) => (`<div class="event__photos-container">
+      <div class="event__photos-tape">
+        ${pictures.map((picture) => `
+          <img class="event__photo" src="${picture.src}" alt="Event photo"></img>
+        `).join('')}
+      </div>
+    </div>`
+);
 
 const getDestinationTemplate = (destination) => {
 
-  let pictures = [];
-  let description = '';
+  const {pictures, description} = destination;
 
-  if(destination !== '') {
-    pictures = destination.pictures;
-    description = destination.description;
-  }
+  return description === '' ? description : (`
+    <section class="event__section  event__section--destination">
+      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+      <p class="event__destination-description">${description}</p>
 
-  return (`
-    <p class="event__destination-description">${description}</p>
+      ${pictures.length !== 0 ? getPhotosTemplate(pictures) : ''}
 
-    <div class="event__photos-container">
-      <div class="event__photos-tape">
-        ${pictures ? getPhotosTemplate(pictures) : ''}
-      </div>
-    </div>
+    </section>
   `);
 };
 
@@ -121,26 +133,11 @@ const createEditPointTemplate = (point, offers, destinations) => {
             <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
           </div>
 
-          ${getButtonsTemplate(isNewPoint ?? false)}
+          ${getButtonsTemplate(isNewPoint)}
         </header>
         <section class="event__details">
-          <section class="event__section  event__section--offers">
-            <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-
-            <div class="event__available-offers">
-              ${getOffersTemplate(offersId, currentOffers)}
-            </div>
-          </section>
-
-          <section class="event__section  event__section--destination">
-            <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            ${getDestinationTemplate(currentDestination === null ? '' : currentDestination)}
-          </section>
-
-          <section class="event__section  event__section--destination">
-            <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            <p class="event__destination-description">${currentDestination === null ? '' : currentDestination.description} </p>
-          </section>
+          ${currentOffers !== '' ? getOffersTemplate(offersId, currentOffers) : ''}
+          ${currentDestination === null ? '' : getDestinationTemplate(currentDestination)}
         </section>
       </form>
     </li>`
@@ -203,9 +200,11 @@ export default class EditPointView extends AbstractStatefulView {
       .querySelector('.event__type-group')
       .addEventListener('click', this.#eventTypeClickHandler);
 
-    this.element
-      .querySelector('.event__available-offers')
-      .addEventListener('click', this.#offersClickHandler);
+    if(this.element.querySelector('.event__available-offers')){
+      this.element
+        .querySelector('.event__available-offers')
+        .addEventListener('click', this.#offersClickHandler);
+    }
 
     this.element
       .querySelector('.event__input--destination')
@@ -267,7 +266,7 @@ export default class EditPointView extends AbstractStatefulView {
       выбран оффер или нет(т.е. был ли id офера в массиве выбранных
       оферов или нет) */
       this.updateElement({
-        offers: togleOffers(offers, Number(evt.target.dataset.offerId))
+        offers: togleOffers(offers, evt.target.dataset.offerId)
       });
     }
   };
@@ -351,3 +350,5 @@ export default class EditPointView extends AbstractStatefulView {
   }
 
 }
+
+
