@@ -48,16 +48,14 @@ const getOffersTemplate = (offersId, offers) => offers.length > 0 ? `
 
 ` : '';
 
-const getPhotosTemplate = (pictures) => {
-  return (
-    `<div class="event__photos-container">
+const getPhotosTemplate = (pictures) => (`<div class="event__photos-container">
       <div class="event__photos-tape">
         ${pictures.map((picture) => `
           <img class="event__photo" src="${picture.src}" alt="Event photo"></img>
         `).join('')}
       </div>
-    </div>`);
-};
+    </div>`
+);
 
 const getDestinationTemplate = (destination) => {
 
@@ -138,14 +136,13 @@ const createEditPointTemplate = (point, offers, destinations) => {
           ${getButtonsTemplate(isNewPoint)}
         </header>
         <section class="event__details">
-          ${currentOffers !== ''? getOffersTemplate(offersId, currentOffers) : ''}
+          ${currentOffers !== '' ? getOffersTemplate(offersId, currentOffers) : ''}
           ${currentDestination === null ? '' : getDestinationTemplate(currentDestination)}
         </section>
       </form>
     </li>`
   );
 };
-
 
 
 export default class EditPointView extends AbstractStatefulView {

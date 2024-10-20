@@ -170,7 +170,6 @@ export default class BoardPresenter {
         break;
       case UpdateType.INIT:
         this.#isLoading = false;
-        /* this.#clearBoard({resetSortType: true}); */
         remove(this.#loadingComponent);
         this.#renderBoard();
         break;

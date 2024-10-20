@@ -19,6 +19,7 @@ export default class PointApiService extends ApiService {
   }
 
   async updatePoint(point) {
+
     const response = await this._load({
       url: `points/${point.id}`,
       method: RequestMethod.PUT,
@@ -35,8 +36,8 @@ export default class PointApiService extends ApiService {
     const adaptedPoint = {
       ...point,
       'base_price': point.basePrice,
-      'date_from': point.dateFrom instanceof Date ? point.dateFrom.toISOString() : point.dateFrom,
-      'date_to': point.dateTo instanceof Date ? point.dateTo.toISOString() : point.dateTo,
+      'date_from': point.dateFrom instanceof Date ? point.dateFrom.toISOString() : point.dateFrom.toISOString(),
+      'date_to': point.dateTo instanceof Date ? point.dateTo.toISOString() : point.dateTo.toISOString(),
       'is_favorite': point.isFavorite
     };
 

@@ -9,7 +9,7 @@ import PointApiService from './point-api-service.js';
 
 
 const END_POINT = 'https://24.objects.htmlacademy.pro/big-trip';
-const AUTHORIZATION = 'Basic 24FefwFf423Fvsz';
+const AUTHORIZATION = 'Basic 24FefwFf4ge23Fvsz';
 
 const pointsModel = new PointsModel({
   pointApiService: new PointApiService(END_POINT, AUTHORIZATION)
@@ -46,12 +46,9 @@ const newPointButtonComponent = new NewPointButtonView({
 });
 
 
-
 filterPresenter.init();
-render(newPointButtonComponent, headerContainer);
-
-boardPresenter.init()
-pointsModel.init();
-
-
-
+boardPresenter.init();
+pointsModel.init()
+  .finally(() => {
+    render(newPointButtonComponent, headerContainer);
+  });
