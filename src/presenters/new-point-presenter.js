@@ -1,4 +1,3 @@
-import { nanoid } from 'nanoid';
 import { UpdateType, UserAction } from '../const/points-const';
 import EditPointView from '../views/edit-point-view';
 import { RenderPosition, remove, render } from '../framework/render';
@@ -49,11 +48,30 @@ export default class NewPointPresenter {
     document.removeEventListener('click', this.#escKeyDownHandler);
   }
 
+  setSaving(){
+    this.#editPointComponent.updateElement({
+      isDisabled: true,
+      isSaving: true
+    });
+  }
+
+  setAborting(){
+    const resetFormState = () => {
+      this.#editPointComponent.updateElement({
+        isDeleting: false,
+        isSaving: false,
+        isDisabled: false
+      });
+    };
+
+    this.#editPointComponent.shake(resetFormState);
+  }
+
   #onSubmitButtonClick = (state) => {
     this.#viewActionHandler(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
-      {id: nanoid(), ...state}
+      state
     );
   };
 

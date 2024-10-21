@@ -19,7 +19,7 @@ const getEventTypelistTemplate = () => EVENT_TYPES.map((type) => (`
 const getDestinationListTemplate = (destinations) => destinations.map((destination) => `<option value="${destination.name}"></option>`).join('');
 
 
-const getOffersTemplate = (offersId, offers) => offers.length > 0 ? `
+const getOffersTemplate = (offersId, offers, isDisabled) => offers.length > 0 ? `
 
   <section class="event__section  event__section--offers">
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
@@ -33,8 +33,9 @@ const getOffersTemplate = (offersId, offers) => offers.length > 0 ? `
         type="checkbox"
         name="event-offer-luggage"
         ${offersId.includes(offer.id) ? 'checked' : ''}
+        ${isDisabled ? 'disabled' : ''}
         >
-        <label class="event__offer-label"
+        <label class="event__offer-label "
         for="event-offer-luggage-${offer.id}"
         data-offer-id = ${offer.id}>
           <span class="event__offer-title">${offer.title}</span>
@@ -72,17 +73,38 @@ const getDestinationTemplate = (destination) => {
   `);
 };
 
-const getButtonsTemplate = (isNewPoint) => (`
-  <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-  <button class="event__reset-btn" type="reset">${isNewPoint ? 'Close' : 'Delete'}</button>
-  ${isNewPoint ? '' : `<button class="event__rollup-btn" type="button">
+const getButtonDeleteMessage = (isNewPoint, isDeleting) => {
+  if(isNewPoint){
+    return 'Close';
+  }
+
+  if(isDeleting){
+    return 'Deleting...';
+  }
+
+  return 'Delete';
+};
+
+const getButtonsTemplate = (isNewPoint, isDeleting, isSaving, isDisabled) => (`
+  <button
+    class="event__save-btn  btn  btn--blue"
+    type="submit"
+    ${isDisabled ? 'disabled' : ''}>
+      ${isSaving ? 'Saving...' : 'Save'}
+    </button>
+  <button class="event__reset-btn"
+    type="reset"
+    ${isDisabled ? 'disabled' : ''}>
+      ${getButtonDeleteMessage(isNewPoint, isDeleting)}
+    </button>
+  ${isNewPoint ? '' : `<button class="event__rollup-btn" type="button" ${isDisabled ? 'disabled' : ''}>
     <span class="visually-hidden">Open event</span>
 </button>`}
 `);
 
 const createEditPointTemplate = (point, offers, destinations) => {
 
-  const {type, destination: destinationId, dateTo, dateFrom, basePrice, offers: offersId, isNewPoint } = point;
+  const {type, destination: destinationId, dateTo, dateFrom, basePrice, offers: offersId, isNewPoint, isDisabled, isDeleting, isSaving } = point;
   const currentDestination = findById(destinations, destinationId) ?? '';
   const currentOffers = getOffersByType(offers, type);
 
@@ -99,7 +121,7 @@ const createEditPointTemplate = (point, offers, destinations) => {
             <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
             <div class="event__type-list">
-              <fieldset class="event__type-group">
+              <fieldset class="event__type-group" ${isDisabled ? 'disabled' : ''}>
                 <legend class="visually-hidden">Event type</legend>
 
                 ${getEventTypelistTemplate()}
@@ -111,18 +133,18 @@ const createEditPointTemplate = (point, offers, destinations) => {
             <label class="event__label  event__type-output" for="event-destination-1">
               ${capitalizeFirstLetter(type)}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${currentDestination.name ?? '' }" list="destination-list-1">
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${currentDestination.name ?? '' }" list="destination-list-1" ${isDisabled ? 'disabled' : ''}>
             <datalist id="destination-list-1">
-              ${getDestinationListTemplate(destinations)}
+              ${destinations === '' ? destinations : getDestinationListTemplate(destinations)}
             </datalist>
           </div>
 
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-1">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${ dateFrom ? formatEditPointDate(dateFrom) : ''}">
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${ dateFrom ? formatEditPointDate(dateFrom) : ''}" ${isDisabled ? 'disabled' : ''}>
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dateTo ? formatEditPointDate(dateTo) : ''}">
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dateTo ? formatEditPointDate(dateTo) : ''}" ${isDisabled ? 'disabled' : ''}>
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -130,14 +152,14 @@ const createEditPointTemplate = (point, offers, destinations) => {
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
+            <input class="event__input  event__input--price" id="event-price-1" type="number" min = "1" max = "100000" name="event-price" value="${basePrice}" ${isDisabled ? 'disabled' : ''}>
           </div>
 
-          ${getButtonsTemplate(isNewPoint)}
+          ${getButtonsTemplate(isNewPoint, isDeleting, isSaving, isDisabled)}
         </header>
         <section class="event__details">
-          ${currentOffers !== '' ? getOffersTemplate(offersId, currentOffers) : ''}
-          ${currentDestination === null ? '' : getDestinationTemplate(currentDestination)}
+          ${currentOffers !== '' ? getOffersTemplate(offersId, currentOffers, isDisabled) : ''}
+          ${currentDestination === '' ? '' : getDestinationTemplate(currentDestination)}
         </section>
       </form>
     </li>`
@@ -158,7 +180,7 @@ export default class EditPointView extends AbstractStatefulView {
 
   constructor({point = BLANK_POINT, offers, destinations, onCloseEditButtonClick, onSubmitButtonClick, onDeleteButtonClick}) {
     super();
-    this._setState(point);
+    this._setState(EditPointView.parsePointToState(point));
     this.#offers = offers;
     this.#destinations = destinations;
     this.#onCloseEditButtonClick = onCloseEditButtonClick;
@@ -234,7 +256,7 @@ export default class EditPointView extends AbstractStatefulView {
   #submitButtonClickHandler = (evt) => {
     evt.preventDefault();
     if(this.#isInputFull()){
-      this.#onSubmitButtonClick({...this._state});
+      this.#onSubmitButtonClick(EditPointView.parseStateToPoint(this._state));
       return;
     }
 
@@ -296,7 +318,7 @@ export default class EditPointView extends AbstractStatefulView {
     evt.preventDefault();
 
     this.updateElement({
-      basePrice: evt.target.value.replace(/[^\d]/g, '')
+      basePrice: Number(evt.target.value.replace(/[^\d]/g, ''))
     });
   };
 
@@ -310,7 +332,7 @@ export default class EditPointView extends AbstractStatefulView {
 
   #deleteButtonClickHandler = (evt) => {
     evt.preventDefault();
-    this.#onDeleteButtonClick({...this._state});
+    this.#onDeleteButtonClick(EditPointView.parseStateToPoint(this._state));
   };
 
   #setDatePicker = () => {
@@ -346,7 +368,27 @@ export default class EditPointView extends AbstractStatefulView {
   };
 
   reset(point) {
-    this.updateElement(point);
+    this.updateElement(EditPointView.parsePointToState(point));
+  }
+
+  static parsePointToState(point){
+    return {
+      ...point,
+      isDeleting: false,
+      isSaving: false,
+      isDisabled: false
+    };
+  }
+
+  static parseStateToPoint(state){
+    const point = {...state};
+
+    delete point.isDeleting;
+    delete point.isDisabled;
+    delete point.isSaving;
+    delete point?.isNewPoint;
+
+    return point;
   }
 
 }

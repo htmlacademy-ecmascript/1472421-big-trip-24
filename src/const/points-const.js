@@ -41,12 +41,11 @@ const UpdateType = {
 };
 
 const BLANK_POINT = {
-  id: '',
   basePrice: 0,
   dateFrom: null,
   dateTo: null,
   destination: null,
-  isFavorite: 0,
+  isFavorite: false,
   offers: [],
   type: EVENT_TYPES[5],
   isNewPoint: true
@@ -56,7 +55,7 @@ const RequestMethod = {
   GET: 'GET',
   POST: 'POST',
   PUT: 'PUT',
-  PATCH: 'PATCH'
+  DELETE: 'DELETE'
 };
 
 
