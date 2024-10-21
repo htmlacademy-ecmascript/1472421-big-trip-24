@@ -1,17 +1,17 @@
-import { BLANK_POINT, EVENT_TYPES } from '../const/points-const';
+import { BLANK_POINT } from '../const/points-const';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import { formatEditPointDate, getIdByName, getOffersByType, togleOffers } from '../utils/points-utils';
 import { capitalizeFirstLetter, findById } from '../utils/utils';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
-const getEventTypelistTemplate = () => EVENT_TYPES.map((type) => (`
+const getEventTypelistTemplate = (offers) => offers.map((offer) => (`
   <div class="event__type-item">
-    <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
-    <label class="event__type-label  event__type-label--${type}"
-    for="event-type-${type}-1"
-    data-event-type = ${type}>
-      ${capitalizeFirstLetter(type)}
+    <input id="event-type-${offer.type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${offer.type}">
+    <label class="event__type-label  event__type-label--${offer.type}"
+    for="event-type-${offer.type}-1"
+    data-event-type = ${offer.type}>
+      ${capitalizeFirstLetter(offer.type)}
     </label>
   </div>`
 )).join('');
@@ -124,7 +124,7 @@ const createEditPointTemplate = (point, offers, destinations) => {
               <fieldset class="event__type-group" ${isDisabled ? 'disabled' : ''}>
                 <legend class="visually-hidden">Event type</legend>
 
-                ${getEventTypelistTemplate()}
+                ${getEventTypelistTemplate(offers)}
               </fieldset>
             </div>
           </div>
@@ -133,7 +133,7 @@ const createEditPointTemplate = (point, offers, destinations) => {
             <label class="event__label  event__type-output" for="event-destination-1">
               ${capitalizeFirstLetter(type)}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${currentDestination.name ?? '' }" list="destination-list-1" ${isDisabled ? 'disabled' : ''}>
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${currentDestination?.name ? currentDestination?.name : '' }" list="destination-list-1" ${isDisabled ? 'disabled' : ''}>
             <datalist id="destination-list-1">
               ${destinations === '' ? destinations : getDestinationListTemplate(destinations)}
             </datalist>
@@ -267,12 +267,12 @@ export default class EditPointView extends AbstractStatefulView {
 
   #eventTypeClickHandler = (evt) => {
     evt.preventDefault();
-    if(evt.target.classList.contains('event__type-label')){
-      this.updateElement({
-        type: evt.target.dataset.eventType,
-        offers: []
-      });
-    }
+    const eventType = evt.target.dataset.eventType;
+
+    this.updateElement({
+      type: eventType,
+      offers: []
+    });
   };
 
   #offersClickHandler = (evt) => {
@@ -392,5 +392,3 @@ export default class EditPointView extends AbstractStatefulView {
   }
 
 }
-
-
