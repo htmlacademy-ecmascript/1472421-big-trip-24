@@ -152,7 +152,7 @@ const createEditPointTemplate = (point, offers, destinations) => {
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}" ${isDisabled ? 'disabled' : ''}>
+            <input class="event__input  event__input--price" id="event-price-1" type="number" min = "1" max = "100000" name="event-price" value="${basePrice}" ${isDisabled ? 'disabled' : ''}>
           </div>
 
           ${getButtonsTemplate(isNewPoint, isDeleting, isSaving, isDisabled)}
