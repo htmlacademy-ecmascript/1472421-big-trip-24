@@ -64,11 +64,11 @@ const getWeightForNullValue = (valueA, valueB) => {
   return null;
 };
 
-const sortByPrice = (pointA, pointB) => getWeightForNullValue(pointA, pointB) ?? pointB.basePrice - pointA.basePrice;
+const sortByPrice = (pointA, pointB) => getWeightForNullValue(pointA.basePrice, pointB.basePrice) ?? pointB.basePrice - pointA.basePrice;
 
-const sortByTime = (pointA, pointB) => getWeightForNullValue(pointA, pointB) ?? getDurationEvent(pointB.dateFrom, pointB.dateTo).asMilliseconds() - getDurationEvent(pointA.dateFrom, pointA.dateTo).asMilliseconds();
+const sortByTime = (pointA, pointB) => getDurationEvent(pointB.dateFrom, pointB.dateTo).asMilliseconds() - getDurationEvent(pointA.dateFrom, pointA.dateTo).asMilliseconds();
 
-const sortByDay = (pointA, pointB) => getWeightForNullValue(pointA, pointB) ?? dateAdapter(pointA.dateFrom).isBefore(dateAdapter(pointB.dateFrom));
+const sortByDay = (pointA, pointB) => getWeightForNullValue(dayjs(pointA.dateFrom).unix(), dayjs(pointB.dateFrom).unix()) ?? dateAdapter(pointA.dateFrom).diff(dateAdapter(pointB.dateFrom));
 /* Функция удаляет id оффера из массива id-шников выбранных офферов
 точки маршрута если id оффера, пришедший на вход функции
 уже есть в массиве(выбранных офферов
