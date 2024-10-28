@@ -5,13 +5,13 @@ import FilterView from '../views/filter-view';
 
 export default class FilterPresenter {
 
-  #headerContainer = null;
+  #filterContainer = null;
   #filterModel = null;
   #pointsModel = null;
   #filterComponent = null;
 
-  constructor({headerContainer, filterModel, pointsModel}) {
-    this.#headerContainer = headerContainer;
+  constructor({filterContainer, filterModel, pointsModel}) {
+    this.#filterContainer = filterContainer;
     this.#filterModel = filterModel;
     this.#pointsModel = pointsModel;
 
@@ -34,14 +34,14 @@ export default class FilterPresenter {
         count: filter[FiltersPoint.FUTURE](points).length
       },
       {
-        type: FiltersPoint.PAST,
-        name: 'past',
-        count: filter[FiltersPoint.PAST](points).length
-      },
-      {
         type: FiltersPoint.PRESENT,
         name: 'present',
         count: filter[FiltersPoint.PRESENT](points).length
+      },
+      {
+        type: FiltersPoint.PAST,
+        name: 'past',
+        count: filter[FiltersPoint.PAST](points).length
       },
     ];
   }
@@ -57,7 +57,7 @@ export default class FilterPresenter {
     });
 
     if(prevFilterComponent === null){
-      render(this.#filterComponent, this.#headerContainer);
+      render(this.#filterComponent, this.#filterContainer);
       return;
     }
 

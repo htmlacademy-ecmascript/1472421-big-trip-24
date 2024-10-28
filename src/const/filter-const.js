@@ -5,7 +5,8 @@ const FiltersPoint = {
   EVERYTHING: 'everything',
   FUTURE: 'future',
   PRESENT: 'present',
-  PAST: 'past'
+  PAST: 'past',
+  NO_LOADED: 'no loaded'
 };
 
 const filter = {
@@ -20,6 +21,7 @@ const NoPointTextByFilter = {
   [FiltersPoint.FUTURE]: 'There are no future events now',
   [FiltersPoint.PAST]: 'There are no past events now',
   [FiltersPoint.PRESENT]: 'There are no present events now',
+  [FiltersPoint.NO_LOADED]: 'Failed to load latest route information'
 };
 
 export {

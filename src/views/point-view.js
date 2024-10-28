@@ -14,12 +14,34 @@ const getSelectedOffersTemplate = (offersId, offers) => offersId.map((offerId) =
   `);
 }).join('');
 
+const humanizeDurationEvent = (duration) => duration > 9 ? `${duration}` : `0${duration}`;
+
+const getFormatedDurationEvent = (dateFrom, dateTo) => {
+
+  const years = getDurationEvent(dateFrom, dateTo).years();
+  const days = getDurationEvent(dateFrom, dateTo).days();
+  const hours = humanizeDurationEvent(getDurationEvent(dateFrom, dateTo).hours());
+  const minutes = humanizeDurationEvent(getDurationEvent(dateFrom, dateTo).minutes());
+
+  if(years > 0) {
+    return `${humanizeDurationEvent(days + (years * 365))}D ${hours}H ${minutes}M`;
+  }
+
+  if(days > 0){
+    return `${humanizeDurationEvent(days)}D ${hours}H ${minutes}M`;
+  }
+
+
+  return `${hours}H ${minutes}M`;
+};
+
 
 const createPointTemplate = (point, offers, destinations) => {
 
   const {type, destination: destinationId, isFavorite, offers: offersId, dateFrom, dateTo, basePrice} = point;
   const currentDestination = findById(destinations, destinationId) ?? '';
   const currentOffers = getOffersByType(offers, type) ?? '';
+
 
   return (
     `<li class="trip-events__item">
@@ -35,7 +57,7 @@ const createPointTemplate = (point, offers, destinations) => {
             &mdash;
             <time class="event__end-time" datetime="2019-03-18T16:05">${formatPointDate(dateTo)}</time>
           </p>
-          <p class="event__duration">${getDurationEvent(dateFrom, dateTo).hours()}H ${getDurationEvent(dateFrom, dateTo).minutes()}M</p>
+          <p class="event__duration">${getFormatedDurationEvent(dateFrom, dateTo)}</p>
         </div>
         <p class="event__price">
           &euro;&nbsp;<span class="event__price-value">${basePrice}</span>

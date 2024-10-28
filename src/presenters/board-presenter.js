@@ -39,7 +39,7 @@ export default class BoardPresenter {
   });
 
 
-  constructor({boardContainer, pointsModel,filterModel}) {
+  constructor({boardContainer, pointsModel, filterModel, onNewPointClose}) {
     this.#boardContainer = boardContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
@@ -47,7 +47,8 @@ export default class BoardPresenter {
 
     this.#newPointPresenter = new NewPointPresenter({
       pointListContainer: this.#pointsListComponent,
-      onPointChange: this.#viewActionHandler
+      onPointChange: this.#viewActionHandler,
+      onNewPointClose: onNewPointClose
     });
 
     /* Подписываемся на изменение данных модели и прокидываем функцию,
@@ -107,9 +108,15 @@ export default class BoardPresenter {
   #renderPointsList = () => {
     render(this.#pointsListComponent, this.#boardContainer);
 
+    if(!this.#pointsModel.isLoaded){
+      this.#filterType = FiltersPoint.NO_LOADED;
+      this.#renderNoPoint();
+
+      return;
+    }
+
     if(this.points.length === 0){
-      this.#listMessageComponent = new ListMessageView({filterType: this.#filterType});
-      render(this.#listMessageComponent, this.#pointsListComponent.element);
+      this.#renderNoPoint();
       return;
     }
 
@@ -129,8 +136,14 @@ export default class BoardPresenter {
       this.#renderLoading();
       return;
     }
+
     this.#renderSort();
     this.#renderPointsList();
+  }
+
+  #renderNoPoint() {
+    this.#listMessageComponent = new ListMessageView({filterType: this.#filterType});
+    render(this.#listMessageComponent, this.#pointsListComponent.element);
   }
 
   /* Метод описывается стрелочной функцией, для того, что бы при вызове
@@ -205,7 +218,7 @@ export default class BoardPresenter {
   };
 
   #modeChangeHandler = () => {
-    this.#newPointPresenter.destroy();
+    this.#newPointPresenter?.destroy();
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
   };
 
@@ -233,7 +246,7 @@ export default class BoardPresenter {
     remove(this.#listMessageComponent);
     remove(this.#loadingComponent);
 
-    this.#newPointPresenter.destroy();
+    this.#newPointPresenter?.destroy();
     this.#clearPointslist();
 
     if(resetSortType){
@@ -242,8 +255,11 @@ export default class BoardPresenter {
   };
 
   createPoint() {
-    this.#filterModel.setFilter(UpdateType.MAJOR, FiltersPoint.EVERYTHING);
-    this.#newPointPresenter.init(this.offers, this.destinations);
+    if(this.#pointsModel.isLoaded){
+      this.#filterModel.setFilter(UpdateType.MAJOR, FiltersPoint.EVERYTHING);
+      remove(this.#listMessageComponent);
+      this.#newPointPresenter.init(this.offers, this.destinations);
+    }
   }
 
 }
