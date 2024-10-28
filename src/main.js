@@ -9,7 +9,7 @@ import InfoPresenter from './presenters/info-presenter.js';
 
 
 const END_POINT = 'https://24.objects.htmlacademy.pro/big-trip';
-const AUTHORIZATION = 'Basic 24FefwFf64g4dde23Fvsz';
+const AUTHORIZATION = 'Basic 24FfwFf64g4dde23Fvsz';
 
 const pointsModel = new PointsModel({
   pointApiService: new PointApiService(END_POINT, AUTHORIZATION)
