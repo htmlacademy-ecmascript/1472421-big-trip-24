@@ -88,6 +88,7 @@ export default class PointPresenter {
 
   setSaving(){
     if(this.#mode === PointMode.EDITING){
+
       this.#editPointComponent.updateElement({
         isDisabled: true,
         isSaving: true
@@ -140,7 +141,6 @@ export default class PointPresenter {
       state
     );
 
-    this.#replaceEditPointToPoint();
   };
 
   #escKeyDownHandler = (evt) => {
@@ -167,18 +167,18 @@ export default class PointPresenter {
     );
   };
 
-  #replacePointToEditPoint = () => {
+  #replacePointToEditPoint() {
     replace(this.#editPointComponent, this.#pointComponent);
     document.addEventListener('keydown', this.#escKeyDownHandler);
     this.#modeChangeHandler();
     this.#mode = PointMode.EDITING;
-  };
+  }
 
-  #replaceEditPointToPoint = () => {
+  #replaceEditPointToPoint() {
     replace(this.#pointComponent, this.#editPointComponent);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
     this.#mode = PointMode.DEFAULT;
-  };
+  }
 
   destroy() {
     remove(this.#pointComponent);

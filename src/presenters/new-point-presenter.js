@@ -10,10 +10,12 @@ export default class NewPointPresenter {
   #pointListContainer = null;
   #viewActionHandler = null;
   #editPointComponent = null;
+  #newPointCloseHandler = null;
 
-  constructor ({pointListContainer, onPointChange}) {
+  constructor ({pointListContainer, onPointChange, onNewPointClose}) {
     this.#pointListContainer = pointListContainer;
     this.#viewActionHandler = onPointChange;
+    this.#newPointCloseHandler = onNewPointClose;
   }
 
 
@@ -33,8 +35,7 @@ export default class NewPointPresenter {
     });
 
     render(this.#editPointComponent, this.#pointListContainer.element, RenderPosition.AFTERBEGIN);
-
-    document.addEventListener('click', this.#escKeyDownHandler);
+    document.addEventListener('keydown', this.#escKeyDownOnNewPointHandler);
   }
 
   destroy() {
@@ -42,10 +43,12 @@ export default class NewPointPresenter {
       return;
     }
 
+    this.#newPointCloseHandler();
+
     remove(this.#editPointComponent);
     this.#editPointComponent = null;
 
-    document.removeEventListener('click', this.#escKeyDownHandler);
+    document.removeEventListener('keydown', this.#escKeyDownOnNewPointHandler);
   }
 
   setSaving(){
@@ -79,7 +82,7 @@ export default class NewPointPresenter {
     this.destroy();
   };
 
-  #escKeyDownHandler = (evt) => {
+  #escKeyDownOnNewPointHandler = (evt) => {
     if(evt.key === 'Escape' || evt.key === 'Esc'){
       evt.preventDefault();
       this.destroy();

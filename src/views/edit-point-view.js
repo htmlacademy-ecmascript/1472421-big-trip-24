@@ -75,7 +75,7 @@ const getDestinationTemplate = (destination) => {
 
 const getButtonDeleteMessage = (isNewPoint, isDeleting) => {
   if(isNewPoint){
-    return 'Close';
+    return 'Cancel';
   }
 
   if(isDeleting){
@@ -89,12 +89,12 @@ const getButtonsTemplate = (isNewPoint, isDeleting, isSaving, isDisabled) => (`
   <button
     class="event__save-btn  btn  btn--blue"
     type="submit"
-    ${isDisabled ? 'disabled' : ''}>
-      ${isSaving ? 'Saving...' : 'Save'}
+    ${isDisabled ? 'disabled = "true"' : ''}>
+    ${isSaving ? 'Saving...' : 'Save'}
     </button>
   <button class="event__reset-btn"
     type="reset"
-    ${isDisabled ? 'disabled' : ''}>
+    ${isDisabled ? 'disabled = "true"' : ''}>
       ${getButtonDeleteMessage(isNewPoint, isDeleting)}
     </button>
   ${isNewPoint ? '' : `<button class="event__rollup-btn" type="button" ${isDisabled ? 'disabled' : ''}>
@@ -255,6 +255,7 @@ export default class EditPointView extends AbstractStatefulView {
 
   #submitButtonClickHandler = (evt) => {
     evt.preventDefault();
+
     if(this.#isInputFull()){
       this.#onSubmitButtonClick(EditPointView.parseStateToPoint(this._state));
       return;

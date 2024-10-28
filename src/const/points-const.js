@@ -58,6 +58,7 @@ const RequestMethod = {
   DELETE: 'DELETE'
 };
 
+const SHOW_COUNT_DESTINATIONS = 3;
 
 export {
   MessageBoard,
@@ -71,5 +72,6 @@ export {
   UserAction,
   UpdateType,
   BLANK_POINT,
-  RequestMethod
+  RequestMethod,
+  SHOW_COUNT_DESTINATIONS
 };
